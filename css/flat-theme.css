@@ -1,0 +1,426 @@
+/* ==========================================================================
+   60-30-10 COLOR SYSTEM - PROFESSIONAL FINANCIAL TERMINAL DESIGN
+   (css/flat-theme.css)
+   
+   🎨 60-30-10 Rule Implementation:
+   - 60% Dominant (Off-Black Slate Navy): #0b0f19 / #111827 (ไม่ใช้ #000000 สนิท)
+   - 30% Secondary (Off-White Slate Light): #f8fafc / #cbd5e1 (ไม่ใช้ #ffffff สนิท)
+   - 10% Accent (Financial Royal Blue): #2563eb / #1d4ed8 (สำหรับ CTA / Active States)
+
+   🔒 Stock Card Policy:
+   - ห้ามยุ่งเกี่ยวกับการ์ดหุ้น สไตล์และการจัดวางล็อคคงเดิมจาก market.css 100%
+   ========================================================================== */
+
+:root {
+  /* 60% Dominant Backgrounds (Professional Off-Black Navy & Deep Charcoal) */
+  --bg-dominant-root: #141313;
+  --bg-dominant-surface: #1c252e;
+  --bg-dominant-card: #121720;
+  --bg-dominant-hover: #463355;
+
+  /* 30% Secondary Elements & Text (Soft Slate & Off-White) */
+  --text-secondary-bright: #f8fafc;
+  --text-secondary-muted: #cbd5e1;
+  --text-secondary-dim: #94a3b8;
+  --border-secondary: #1e293b;
+  --border-secondary-subtle: #334155;
+
+  /* 10% Accent Color (Professional Financial Royal Sapphire Blue) */
+  --accent-blue-primary: #2563eb;
+  --accent-blue-hover: #1d4ed8;
+  --accent-blue-subtle: rgba(37, 99, 235, 0.12);
+  --accent-blue-border: rgba(37, 99, 235, 0.35);
+}
+
+/* 1. 🏢 Body & Global Background (BG.png Background for Game Room & App) */
+html, body {
+  height: 100% !important;
+  min-height: 100% !important;
+  min-height: 100svh !important;
+  min-height: 100dvh !important;
+  background-color: #0b0f19 !important;
+  background-image: url('../Assets/UI_Lobby/BG.png') !important;
+  background-size: cover !important;
+  background-position: center bottom !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  color: var(--text-secondary-bright) !important;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.page-shell {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  height: 100% !important;
+  height: 100svh !important;
+  height: 100dvh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  box-sizing: border-box !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.page-shell::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@media (min-width: 768px) {
+  .page-shell {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .page-shell::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+}
+
+/* 2. 🏛️ Flat Hero Header & Logo (60% Surface / 30% Off-White Text) */
+.hero {
+  background: var(--bg-dominant-surface) !important;
+  border: 1px solid var(--border-secondary) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: none !important;
+  padding: 20px 24px !important;
+}
+
+.logo {
+  color: var(--text-secondary-bright) !important;
+  letter-spacing: 0.15em !important;
+  font-weight: 900 !important;
+}
+
+/* 3. 🔖 Flat Navigation Tab Bar (10% Accent Blue for Active / 30% Off-White for Inactive) */
+#mainNavTabs {
+  width: 100% !important;
+  background: var(--bg-dominant-surface) !important;
+  border: 1px solid var(--border-secondary) !important;
+  border-radius: 16px !important;
+  margin-bottom: 24px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+#mainNavTabs button {
+  width: 50% !important;
+  flex: 1 1 50% !important;
+  padding: 12px 16px !important;
+  text-align: center !important;
+  transition: all 0.2s ease !important;
+}
+
+.tab-active {
+  color: var(--text-secondary-bright) !important;
+  background: var(--accent-blue-primary) !important;
+  border: none !important;
+  font-weight: 800 !important;
+}
+
+.tab-inactive {
+  color: var(--text-secondary-muted) !important;
+  background: transparent !important;
+  border: none !important;
+  font-weight: 700 !important;
+}
+
+.tab-inactive:hover {
+  color: var(--text-secondary-bright) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* 4. 🎛️ Flat Filter & Sort Container (60% Surface / 30% Off-White / 10% Blue Accent) */
+.filter-container {
+  background: var(--bg-dominant-surface) !important;
+  border: 1px solid var(--border-secondary) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: none !important;
+  padding: 20px 24px !important;
+}
+
+.filter-title {
+  color: var(--text-secondary-muted) !important;
+  letter-spacing: 0.1em !important;
+  font-weight: 700 !important;
+}
+
+.pill {
+  background: var(--bg-dominant-card) !important;
+  border: 1px solid var(--border-secondary-subtle) !important;
+  color: var(--text-secondary-muted) !important;
+  border-radius: 10px !important;
+  padding: 8px 16px !important;
+}
+
+.pill:hover {
+  background: var(--bg-dominant-hover) !important;
+  color: var(--text-secondary-bright) !important;
+  border-color: var(--accent-blue-primary) !important;
+  transform: none !important;
+}
+
+.pill.active {
+  background: var(--accent-blue-primary) !important;
+  border-color: var(--accent-blue-primary) !important;
+  color: var(--text-secondary-bright) !important;
+  box-shadow: none !important;
+}
+
+.sort-toggle-btn {
+  background: var(--bg-dominant-card) !important;
+  border: 1px solid var(--border-secondary-subtle) !important;
+  color: var(--text-secondary-muted) !important;
+  border-radius: 10px !important;
+}
+
+.sort-toggle-btn:hover {
+  border-color: var(--accent-blue-primary) !important;
+  color: var(--text-secondary-bright) !important;
+  transform: none !important;
+}
+
+.sort-toggle-btn.active {
+  background: var(--accent-blue-primary) !important;
+  border-color: var(--accent-blue-primary) !important;
+  color: var(--text-secondary-bright) !important;
+  box-shadow: none !important;
+}
+
+.sort-toggle-btn.reset-btn {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+  color: #ef4444 !important;
+}
+
+.sort-toggle-btn.reset-btn:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: #ef4444 !important;
+}
+
+/* 5. 🔒 [RESTORED & FROZEN] Stock Card Styles are 100% untouched & left to original market.css */
+
+/* 6. 📊 Flat Inline Expandable Chart & Stats Grid */
+.chart-container {
+  border-top: 1px solid var(--border-secondary) !important;
+}
+
+.stock-chart-canvas {
+  background: var(--bg-dominant-root) !important;
+  border: 1px solid var(--border-secondary-subtle) !important;
+  border-radius: 8px !important;
+}
+
+.chart-stats-grid {
+  border-top: 1px solid var(--border-secondary) !important;
+}
+
+/* 7. 🔔 Flat GM Pending Orders & Portfolio Panels */
+#gmPendingOrdersSection > div,
+#gmPlayerSalarySection > div {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.summary-card {
+  background: var(--bg-dominant-surface) !important;
+  border: 1px solid var(--border-secondary-subtle) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+.summary-label {
+  color: var(--text-secondary-dim) !important;
+  font-weight: 700 !important;
+}
+
+.table-container, .holdings-table {
+  background: var(--bg-dominant-surface) !important;
+  border: 1px solid var(--border-secondary-subtle) !important;
+  border-radius: 12px !important;
+}
+
+.holdings-table th {
+  background: var(--bg-dominant-card) !important;
+  color: var(--text-secondary-muted) !important;
+  border-bottom: 1px solid var(--border-secondary-subtle) !important;
+  font-weight: 700 !important;
+}
+
+.holdings-table td {
+  border-bottom: 1px solid var(--border-secondary) !important;
+}
+
+.trade-card {
+  background: var(--bg-dominant-surface) !important;
+  border: 1px solid var(--border-secondary-subtle) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.trade-tabs {
+  background: var(--bg-dominant-card) !important;
+  border: 1px solid var(--border-secondary-subtle) !important;
+}
+
+/* 8. ⚠️ Flat Danger Zone Section (พื้นหลังสีดำสนิทเน้นย้ำความเด่นชัด) */
+.danger-zone-card {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  border: 2px solid rgba(239, 68, 68, 0.6) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(239, 68, 68, 0.25) !important;
+  transition: all 0.25s ease !important;
+}
+
+.danger-zone-card:hover {
+  background: #050505 !important;
+  border-color: rgba(239, 68, 68, 0.85) !important;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.85), 0 0 28px rgba(239, 68, 68, 0.4) !important;
+}
+
+.danger-zone-actions .danger-btn,
+.danger-zone-actions .transfer-gm-btn,
+.danger-btn,
+.transfer-gm-btn {
+  width: 100% !important;
+  min-width: 100% !important;
+  height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 0 24px !important;
+  border-radius: 12px !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  border: none !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+}
+
+.danger-btn {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3) !important;
+}
+
+.danger-btn:hover {
+  background: #b91c1c !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45) !important;
+}
+
+.danger-btn:active {
+  background: #991b1b !important;
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25) !important;
+}
+
+.danger-zone-actions .reset-room-btn {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  box-shadow: none !important;
+}
+
+.danger-zone-actions .reset-room-btn:hover {
+  background: rgba(239, 68, 68, 0.28) !important;
+  border-color: rgba(239, 68, 68, 0.8) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3) !important;
+}
+
+.danger-zone-actions .reset-room-btn:active {
+  background: rgba(239, 68, 68, 0.4) !important;
+  transform: translateY(0) !important;
+}
+
+.transfer-gm-btn {
+  background: #d97706 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3) !important;
+}
+
+.transfer-gm-btn:hover {
+  background: #b45309 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.45) !important;
+}
+
+.transfer-gm-btn:active {
+  background: #92400e !important;
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25) !important;
+}
+
+/* 9. ⚡ Crisp Flat Price Flashing Animations */
+@keyframes flashGreenFlat {
+  0% {
+    color: #10b981 !important;
+    transform: scale(1.05);
+  }
+  100% {
+    color: var(--text-secondary-bright) !important;
+    transform: scale(1);
+  }
+}
+
+@keyframes flashRedFlat {
+  0% {
+    color: #ef4444 !important;
+    transform: scale(1.05);
+  }
+  100% {
+    color: var(--text-secondary-bright) !important;
+    transform: scale(1);
+  }
+}
+
+.flash-up {
+  animation: flashGreenFlat 0.4s ease-out !important;
+}
+
+.flash-down {
+  animation: flashRedFlat 0.4s ease-out !important;
+}
+
+.price-flash-red {
+  animation: flashRedFlat 0.8s ease-out !important;
+}
+
+/* 10. 🔄 Global Smooth Spinning & Pulse Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 0.9s linear infinite !important;
+}

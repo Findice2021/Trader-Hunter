@@ -1,0 +1,85 @@
+{
+  "rules": {
+    "traderHunter": {
+      "boards": {
+        "$roomCode": {
+          ".read": "auth != null",
+          ".write": "auth != null && (!data.exists() || root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || (!newData.exists() && (!root.child('traderHunter/gameRooms/' + $roomCode + '/members').exists() || root.child('traderHunter/gameRooms/' + $roomCode + '/status').val() === 'RESET')))"
+        }
+      },
+      "gameRooms": {
+        "$roomCode": {
+          ".read": "auth != null",
+          ".write": "auth != null && (!data.exists() || !newData.exists() || root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || newData.child('members/' + auth.uid).exists() || newData.child('gmTransferRequest/claimedBy').val() === auth.uid)",
+          
+          "members": {
+            "$uid": {
+              ".write": "auth != null && (auth.uid === $uid || root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || !data.exists())",
+              ".validate": "newData.hasChildren(['role', 'displayName']) && (newData.child('role').val() === 'player' || newData.child('role').val() === 'game_master') && (data.child('role').val() === 'game_master' || newData.child('role').val() !== 'game_master' || root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || !data.exists() || data.parent().parent().child('gmTransferRequest/claimedBy').val() === $uid)"
+            }
+          },
+
+          "pendingOrders": {
+            "$orderId": {
+              ".write": "auth != null && ((!data.exists() && newData.child('uid').val() === auth.uid) || (data.exists() && data.child('uid').val() === auth.uid && !newData.exists()) || root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master')"
+            }
+          },
+
+          "savedMembers": {
+            "$sessionToken": {
+              ".write": "auth != null"
+            }
+          },
+
+          "userSessions": {
+            "$userId": {
+              ".write": "auth != null && auth.uid === $userId"
+            }
+          },
+
+          "gmTransferRequest": {
+            ".write": "auth != null"
+          },
+
+          "ipSessions": {
+            "$ip": {
+              ".write": "auth != null"
+            }
+          },
+
+          "lastActiveAt": {
+            ".write": "auth != null"
+          },
+
+          "lastJoinedAt": {
+            ".write": "auth != null"
+          },
+
+          "status": {
+            ".write": "auth != null && (root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || !data.exists())"
+          },
+
+          "isReset": {
+            ".write": "auth != null && (root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || !data.exists())"
+          },
+
+          "lastProcessedOrder": {
+            ".write": "auth != null && (root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || !data.exists())"
+          },
+
+          "lastSalaryReceived": {
+            ".write": "auth != null && (root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || !data.exists())"
+          },
+
+          "lastDividendReceived": {
+            ".write": "auth != null && (root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || !data.exists())"
+          },
+
+          "lastDebtInterestReceived": {
+            ".write": "auth != null && (root.child('traderHunter/gameRooms/' + $roomCode + '/members/' + auth.uid + '/role').val() === 'game_master' || !data.exists())"
+          }
+        }
+      }
+    }
+  }
+}

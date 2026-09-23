@@ -1,0 +1,592 @@
+/* ==========================================================================
+   MODAL & OVERLAY STYLESHEET (css/modal.css)
+   สไตล์หน้าต่างป๊อบอัพโมดอล ฉากเบลอพื้นหลัง และ กล่องยืนยันการรีเซ็ต
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 🪟 Custom Modal Base & Backdrop (โครงสร้างหน้าต่างโมดอลป๊อบอัพ)
+   -------------------------------------------------------------------------- */
+
+/* ฉากหลังสีเข้มบังหน้าจอหลังป๊อบอัพ */
+.modal {
+  display: none;                    /* ซ่อนฉากหลังไว้ก่อน */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(8, 10, 18, 0.85); /* 👈 สีฉากบังหน้าจอ (สีดำมืดใส) */
+  backdrop-filter: blur(12px);       /* 👈 เอฟเฟกต์เบลอฉากด้านหลัง (Glassmorphism Blur) */
+  z-index: 60;                     /* ความสูงชั้นลอยตาม Disciplined Scale */
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* เมื่อโมดอลแสดงผล (Show) */
+.modal.show {
+  opacity: 1;
+}
+
+/* Header ของกล่องยืนยัน */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.confirm-modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* ปุ่มปิด Modal มาตรฐาน (Hit Target 44x44px) */
+.close-modal-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.5rem;
+  line-height: 1;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 8px;
+  touch-action: manipulation;
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
+}
+
+.close-modal-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.close-modal-btn:active {
+  transform: scale(0.92);
+}
+
+/* ตัวกล่องเนื้อหาโมดอลตรงกลางหน้าจอ */
+.modal-content {
+  background: #171a2a;              /* 👈 สีพื้นหลังกล่องป๊อบอัพ */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* 👈 เส้นขอบจางๆ */
+  width: 90%;
+  max-width: 680px;                 /* 👈 ความกว้างสูงสุดของกล่องป๊อบอัพทั่วไป */
+  border-radius: 28px;              /* 👈 ความมนของมุมกล่องป๊อบอัพ */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35); /* 👈 เงาลอยลึก 3D */
+  padding: 32px;                    /* 👈 ระยะห่างขอบในกล่องป๊อบอัพ */
+  position: relative;
+  transform: translateY(20px);      /* สไลด์เด้งขึ้นเล็กน้อย */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal.show .modal-content {
+  transform: translateY(0);
+}
+
+/* กล่องโมดอลสำหรับยืนยันการ Reset */
+.confirm-modal-content {
+  max-width: 420px !important;       /* 👈 ความกว้างสูงสุดของกล่องยืนยัน Reset */
+  padding: 28px !important;          /* 👈 ระยะห่างขอบในกล่องยืนยัน Reset */
+  border-radius: 24px;               /* 👈 ความมนของกล่องยืนยัน Reset */
+}
+
+/* --------------------------------------------------------------------------
+   2. 🔘 Reset Confirmation Dialog Buttons (ปุ่มในกล่องยืนยันการรีเซ็ต)
+   -------------------------------------------------------------------------- */
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;         /* จัดปุ่มไว้ชิดฝั่งขวา */
+  gap: 12px;                         /* 👈 ระยะห่างระหว่างปุ่ม Cancel กับ Reset */
+}
+
+/* สไตล์ปุ่มกดในกล่องโมดอล */
+.confirm-btn {
+  border: none;
+  padding: 12px 24px;                /* 👈 ขนาดความใหญ่ของปุ่มกด [บน-ล่าง] [ซ้าย-ขวา] */
+  border-radius: 14px;               /* 👈 ความมนของปุ่มกด */
+  font-size: 0.85rem;                /* 👈 ขนาดตัวอักษรบนปุ่มกด */
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* ปุ่มยกเลิก Cancel */
+.confirm-btn.cancel-btn {
+  background: rgba(255, 255, 255, 0.03); /* 👈 สีพื้นหลังปุ่ม Cancel */
+  color: #f7f8fb;                    /* 👈 สีตัวอักษรปุ่ม Cancel */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.confirm-btn.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ปุ่มยืนยัน Reset Prices (สีแดงเด่น) */
+.confirm-btn.reset-btn-confirm {
+  background: #fa375f;              /* 👈 สีพื้นหลังปุ่มยืนยัน Reset (สีชมพูแดง) */
+  color: #ffffff;                   /* 👈 สีตัวอักษรปุ่มยืนยัน Reset */
+  box-shadow: 0 4px 12px rgba(250, 55, 95, 0.25);
+}
+
+.confirm-btn.reset-btn-confirm:hover {
+  background: #ff5277;              /* 👈 สีปุ่ม Reset เมื่อเอาเมาส์ไปวาง */
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(250, 55, 95, 0.35);
+}
+
+/* --------------------------------------------------------------------------
+   3. 🍏 Apple-Style Floating Modal (หน้าต่างลอยเลือก Role สไตล์ Apple Design)
+   -------------------------------------------------------------------------- */
+.apple-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(25px) saturate(190%);
+  -webkit-backdrop-filter: blur(25px) saturate(190%);
+  animation: appleFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: rgba(30, 30, 35, 0.78);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 0.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 28px;
+  padding: 28px 24px 24px 24px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  text-align: center;
+  animation: appleScaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.apple-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: rgba(235, 235, 245, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-modal-close:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.apple-modal-close:active {
+  transform: scale(0.92);
+}
+
+.apple-modal-close.hidden {
+  display: none !important;
+}
+
+.apple-modal-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(10, 132, 255, 0.12);
+  border: 1px solid rgba(10, 132, 255, 0.25);
+  color: #0a84ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px auto;
+}
+
+/* Spinner สไตล์ Apple iOS Activity Indicator */
+.apple-ios-spinner {
+  width: 40px;
+  height: 40px;
+  color: #0a84ff;
+  animation: apple-spinner-step 1s steps(12, end) infinite;
+  transform-origin: center center;
+}
+
+@keyframes apple-spinner-step {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.apple-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.015em;
+  margin-bottom: 4px;
+}
+
+.apple-modal-subtitle {
+  font-size: 0.82rem;
+  color: rgba(235, 235, 245, 0.6);
+  margin-bottom: 24px;
+  line-height: 1.4;
+}
+
+.apple-modal-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 16px !important;
+  width: 100%;
+}
+
+.apple-btn-gm {
+  flex: 1;
+  padding: 13px 16px;
+  border-radius: 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #0a84ff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(10, 132, 255, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-btn-gm:hover {
+  background: #0071e3;
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.5);
+}
+
+.apple-btn-gm:active {
+  transform: scale(0.97);
+}
+
+.apple-btn-player {
+  flex: 1;
+  padding: 13px 16px;
+  border-radius: 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #30d158;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(48, 209, 88, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-btn-player:hover {
+  background: #28b84c;
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(48, 209, 88, 0.5);
+}
+
+.apple-btn-player:active {
+  transform: scale(0.97);
+}
+
+.apple-btn-basic {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.apple-btn-basic:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
+
+.apple-btn-basic:active {
+  transform: scale(0.97);
+}
+
+.apple-btn-advance {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   4. 🔘 SweetAlert2 Confirm Dialog Actions Layout
+      - ปุ่ม Confirm อยู่ฝั่งขวา, ปุ่ม Cancel อยู่ฝั่งซ้าย (มาตรฐานเดียวกับ HTML modals)
+      - SweetAlert2 render confirm ก่อน cancel ใน DOM ดังนั้นต้องใช้ row-reverse
+   -------------------------------------------------------------------------- */
+.trade-alert-actions {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  gap: 12px !important;
+  justify-content: flex-start !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. 🚫 No Bounce / No Pop / No Blink Animations for SweetAlert2
+   -------------------------------------------------------------------------- */
+@keyframes swal2-animate-error-x-mark {
+  0%, 50%, 80%, 100% {
+    margin-top: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes swal2-animate-error-icon {
+  0%, 100% {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes swal2-show {
+  0%, 100% {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+.swal2-popup,
+.swal2-modal,
+.swal2-show,
+.swal2-noanimation {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+.swal2-container,
+.swal2-container.swal2-backdrop-show,
+.swal2-container.swal2-noanimation {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Completely disable all animations and transitions on all SweetAlert2 icons */
+.swal2-icon,
+.swal2-icon *,
+div:where(.swal2-icon),
+div:where(.swal2-icon) *,
+div:where(.swal2-icon).swal2-error,
+div:where(.swal2-icon).swal2-error *,
+div:where(.swal2-icon).swal2-error .swal2-x-mark,
+div:where(.swal2-icon).swal2-error.swal2-icon-show,
+div:where(.swal2-icon).swal2-error.swal2-icon-show * {
+  animation: none !important;
+  transition: none !important;
+}
+
+div:where(.swal2-icon).swal2-error {
+  transform: none !important;
+}
+
+div:where(.swal2-icon).swal2-error .swal2-x-mark {
+  animation: none !important;
+  opacity: 1 !important;
+  margin-top: 0 !important;
+  transform: none !important;
+}
+
+div:where(.swal2-icon).swal2-error [class^='swal2-x-mark-line'] {
+  opacity: 1 !important;
+  margin-top: 0 !important;
+}
+
+div:where(.swal2-icon).swal2-error .swal2-x-mark-line-left {
+  transform: rotate(45deg) !important;
+  opacity: 1 !important;
+}
+
+div:where(.swal2-icon).swal2-error .swal2-x-mark-line-right {
+  transform: rotate(-45deg) !important;
+  opacity: 1 !important;
+}
+
+/* Prevent SweetAlert2 from collapsing body/html height and jumping scroll position */
+html.swal2-shown,
+body.swal2-shown,
+html.swal2-height-auto,
+body.swal2-height-auto {
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+body.swal2-shown .page-shell {
+  height: 100% !important;
+  overflow-y: auto !important;
+}
+
+.apple-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(25px) saturate(190%);
+  -webkit-backdrop-filter: blur(25px) saturate(190%);
+  animation: appleFadeIn 0.2s ease-out;
+}
+
+.apple-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: rgba(30, 30, 35, 0.78);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 0.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 28px;
+  padding: 28px 24px 24px 24px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  text-align: center;
+  animation: appleFadeIn 0.2s ease-out;
+  transform: none !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@keyframes appleFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  transform: none !important;
+  transition: opacity 0.2s ease;
+}
+
+.confirm-btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apple-modal-overlay,
+  .apple-modal-card,
+  .modal,
+  .modal-content,
+  .apple-btn-gm,
+  .apple-btn-player,
+  .apple-btn-basic,
+  .apple-btn-advance,
+  .apple-ios-spinner,
+  .confirm-btn {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Player Name Modal & In-Game Edit Styles
+   -------------------------------------------------------------------------- */
+.apple-modal-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 14px 18px;
+  min-height: 52px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.apple-modal-input:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.apple-modal-input::placeholder {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.apple-modal-error {
+  color: #ff453a;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 20px;
+  transition: opacity 0.2s ease;
+}
+
+.player-name-input-wrapper {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 28px !important;
+}
+
+.edit-player-name-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 3px 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.edit-player-name-btn:hover {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: #34d399;
+}
+
+.edit-player-name-btn:active {
+  transform: scale(0.92);
+}
