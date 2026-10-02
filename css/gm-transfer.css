@@ -35,10 +35,12 @@
   box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3) !important;
 }
 
-.danger-zone-actions .danger-btn:hover {
-  background: #b91c1c !important;
-  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45) !important;
-  transform: translateY(-1px) !important;
+@media (hover: hover) {
+  .danger-zone-actions .danger-btn:hover {
+    background: #b91c1c !important;
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45) !important;
+    transform: translateY(-1px) !important;
+  }
 }
 
 .danger-zone-actions .danger-btn:active {
@@ -54,11 +56,13 @@
   box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3) !important;
 }
 
-.transfer-gm-btn:hover,
-.danger-zone-actions .transfer-gm-btn:hover {
-  background: #b45309 !important;
-  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.45) !important;
-  transform: translateY(-1px) !important;
+@media (hover: hover) {
+  .transfer-gm-btn:hover,
+  .danger-zone-actions .transfer-gm-btn:hover {
+    background: #b45309 !important;
+    box-shadow: 0 6px 20px rgba(217, 119, 6, 0.45) !important;
+    transform: translateY(-1px) !important;
+  }
 }
 
 .transfer-gm-btn:active,
@@ -109,10 +113,12 @@
   user-select: none;
 }
 
-.gm-transfer-player-item:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(245, 158, 11, 0.4);
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .gm-transfer-player-item:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(245, 158, 11, 0.4);
+    transform: translateY(-1px);
+  }
 }
 
 .gm-transfer-player-item.selected {

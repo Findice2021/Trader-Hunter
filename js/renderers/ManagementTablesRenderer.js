@@ -149,6 +149,117 @@ export class ManagementTablesRenderer {
     });
   }
 
+  updateGMPlayerExpenseModalUI(financePlayerList, members, onDeductExpense = null) {
+    if (!financePlayerList) return;
+
+    const memberList = Object.entries(members || {}).filter(([uid, member]) => {
+      if (!member) return false;
+      const role = (member.role || '').toLowerCase();
+      const name = (member.displayName || '').toUpperCase();
+      return role !== 'game_master' && name !== 'GM';
+    });
+
+    if (memberList.length === 0) {
+      financePlayerList.innerHTML = `
+        <div class="kick-player-empty">No players in room</div>
+      `;
+      return;
+    }
+
+    // Preserve selection
+    let currentSelectedUid = this.selectedFinancePlayerUid || null;
+    let selectedUserStillExists = false;
+    financePlayerList.innerHTML = '';
+
+    memberList.forEach(([uid, member]) => {
+      const cash = member.portfolio?.cash ?? 20000;
+      const formattedCash = cash.toLocaleString('en-US');
+      const initial = (member.displayName || 'P').charAt(0).toUpperCase();
+
+      const item = document.createElement('div');
+      item.className = 'kick-player-item';
+      if (uid === currentSelectedUid) {
+        item.classList.add('selected');
+        selectedUserStillExists = true;
+      }
+      item.dataset.uid = uid;
+
+      item.innerHTML = `
+        <div class="kick-player-info">
+          <div class="kick-player-avatar">${initial}</div>
+          <div>
+            <div class="kick-player-name">${member.displayName || 'Player'}</div>
+            <div class="kick-player-stats">Cash: ${formattedCash}</div>
+          </div>
+        </div>
+        <div class="kick-player-radio-indicator"></div>
+      `;
+
+      item.addEventListener('click', () => {
+        const amountContainer = document.getElementById('financeAmountContainer');
+        const confirmBtn = document.getElementById('confirmFinanceModalBtn');
+        const amountInput = document.getElementById('financeAmountInput');
+
+        if (this.selectedFinancePlayerUid === uid) {
+          // Deselect
+          financePlayerList.querySelectorAll('.kick-player-item').forEach(el => el.classList.remove('selected'));
+          this.selectedFinancePlayerUid = null;
+          
+          if (amountContainer) amountContainer.style.display = 'none';
+          if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+          }
+        } else {
+          // Select
+          financePlayerList.querySelectorAll('.kick-player-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          this.selectedFinancePlayerUid = uid;
+          
+          if (amountContainer) amountContainer.style.display = 'block';
+          
+          // Reset preset buttons and hide input
+          const presetBtns = document.querySelectorAll('.finance-preset-btn');
+          presetBtns.forEach(b => {
+            b.classList.remove('active-preset');
+          });
+          const customBtn = document.getElementById('financeCustomBtn');
+          if (customBtn) {
+            customBtn.classList.remove('active-custom');
+          }
+          if (amountInput) {
+            amountInput.style.display = 'none';
+            amountInput.value = '';
+          }
+          if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+          }
+        }
+      });
+
+      financePlayerList.appendChild(item);
+    });
+
+    // If the selected user left the room, hide the input and disable button
+    if (currentSelectedUid && !selectedUserStillExists) {
+      this.selectedFinancePlayerUid = null;
+      const amountContainer = document.getElementById('financeAmountContainer');
+      const confirmBtn = document.getElementById('confirmFinanceModalBtn');
+      if (amountContainer) amountContainer.style.display = 'none';
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.style.opacity = '0.5';
+        confirmBtn.style.cursor = 'not-allowed';
+      }
+    }
+
+    // We don't bind the confirm button here because it would bind multiple times per render.
+    // It should be bound once in MarketController or wherever modals are initialized.
+  }
+
   /**
    * Renders the GM Player Dividend table.
    */
@@ -270,7 +381,7 @@ export class ManagementTablesRenderer {
 
       html += `
         <tr class="border-b border-gray-800 hover:bg-gray-850" data-player-uid="${uid}">
-          <td class="p-3 text-center align-middle"><div class="flex items-center justify-center"><button type="button" class="gm-debt-interest-btn ${interestBtnState}" data-uid="${uid}" title="Pay ${formattedInterest} Debt Interest">Debt Interest ${formattedInterest}</button></div></td>
+          <td class="p-3 text-center align-middle"><div class="flex items-center justify-center"><button type="button" class="gm-debt-interest-btn ${interestBtnState}" data-uid="${uid}" title="Pay ${formattedInterest} Interest">Interest ${formattedInterest}</button></div></td>
           <td class="p-3 font-semibold text-white align-middle">${member.displayName || 'Player'}</td>
           <td class="p-3 align-middle">${debtHoldingsText}</td>
         </tr>

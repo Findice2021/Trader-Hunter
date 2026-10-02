@@ -253,8 +253,10 @@ html, body {
   -webkit-tap-highlight-color: transparent !important;
 }
 
-.lobby-key-submit-btn:hover {
-  filter: brightness(1.1) !important;
+@media (hover: hover) {
+  .lobby-key-submit-btn:hover {
+    filter: brightness(1.1) !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -327,9 +329,11 @@ html, body {
   white-space: nowrap !important;
 }
 
-.lobby-joy-btn:hover {
-  transform: translateY(var(--lobby-joy-btn-y)) scale(1.03) !important;
-  filter: brightness(1.12) drop-shadow(0 12px 24px rgba(0, 0, 0, 0.7)) !important;
+@media (hover: hover) {
+  .lobby-joy-btn:hover {
+    transform: translateY(var(--lobby-joy-btn-y)) scale(1.03) !important;
+    filter: brightness(1.12) drop-shadow(0 12px 24px rgba(0, 0, 0, 0.7)) !important;
+  }
 }
 
 .lobby-joy-btn:active {

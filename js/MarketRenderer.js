@@ -39,6 +39,15 @@ export class MarketRenderer {
     this.gmPendingOrdersBody = document.getElementById('gmPendingOrdersBody');
     this.gmPlayerSalarySection = document.getElementById('gmPlayerSalarySection');
     this.gmPlayerSalaryBody = document.getElementById('gmPlayerSalaryBody');
+    this.openFinanceModalBtn = document.getElementById('openFinanceModalBtn');
+    this.financeModal = document.getElementById('financeModal');
+    this.closeFinanceModalBtn = document.getElementById('closeFinanceModalBtn');
+    this.confirmFinanceModalBtn = document.getElementById('confirmFinanceModalBtn');
+    this.financeAmountInput = document.getElementById('financeAmountInput');
+    this.financeAmountContainer = document.getElementById('financeAmountContainer');
+    this.financePresetBtns = document.querySelectorAll('.finance-preset-btn');
+    this.financeCustomBtn = document.getElementById('financeCustomBtn');
+    this.financePlayerList = document.getElementById('financePlayerList');
     this.gmPlayerDividendSection = document.getElementById('gmPlayerDividendSection');
     this.gmPlayerDividendBody = document.getElementById('gmPlayerDividendBody');
     this.gmPlayerDebtInterestSection = document.getElementById('gmPlayerDebtInterestSection');
@@ -142,7 +151,7 @@ export class MarketRenderer {
    * Sets lobby form into animated Checking... state, toggling join button and checking indicator.
    * @param {boolean} isChecking
    */
-  setLobbyChecking(isChecking) {
+  setLobbyChecking(isChecking, customText = null) {
     const form = this.lobbyForm;
     const btn = this.joinRoomBtn;
     const indicator = this.lobbyCheckingIndicator || (typeof document !== 'undefined' ? document.getElementById('lobbyCheckingIndicator') : null);
@@ -155,11 +164,17 @@ export class MarketRenderer {
         btn.style.setProperty('display', 'none', 'important');
       }
       if (indicator) {
+        if (customText) {
+          const textSpan = indicator.querySelector('.checking-text');
+          if (textSpan) textSpan.textContent = customText;
+        }
         indicator.style.setProperty('display', 'flex', 'important');
       }
     } else {
       if (form) form.classList.remove('is-checking');
       if (indicator) {
+        const textSpan = indicator.querySelector('.checking-text');
+        if (textSpan) textSpan.textContent = "CHECKING";
         indicator.style.setProperty('display', 'none', 'important');
       }
       if (btn) {
@@ -485,6 +500,9 @@ export class MarketRenderer {
   updateGMPendingOrdersUI(orders, onApprove, onReject, members = {}) { this.portfolioRenderer.updateGMPendingOrdersUI(this.gmPendingOrdersBody, orders, onApprove, onReject, members); }
   updateGMPlayerSalaryUI(members, onPaySalary) { 
     this.portfolioRenderer.updateGMPlayerSalaryUI(this.gmPlayerSalaryBody, members, onPaySalary); 
+  }
+  updateGMPlayerExpenseModalUI(members, onDeductExpense) {
+    this.portfolioRenderer.updateGMPlayerExpenseModalUI(this.financePlayerList, members, onDeductExpense);
   }
   updateGMPlayerDividendUI(members, boardStocks = {}, masterStocks = {}, originalCards = [], onPayDividend = null) { 
     this.portfolioRenderer.updateGMPlayerDividendUI(this.gmPlayerDividendBody, members, boardStocks, masterStocks, originalCards, onPayDividend); 

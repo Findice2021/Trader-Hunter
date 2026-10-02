@@ -120,9 +120,11 @@
   transition: color 0.15s ease !important;
 }
 
-.iab-btn-close:hover {
-  color: #ffffff !important;
-  background: rgba(255, 255, 255, 0.08) !important;
+@media (hover: hover) {
+  .iab-btn-close:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
 }
 
 /* ↗️ ตัวชี้มุมขวาบนแบบมีแอนิเมชันสำหรับ iOS (แนะนำให้กดเมนู 3 จุด) */

@@ -144,9 +144,13 @@ body::-webkit-scrollbar {
   font-weight: 700 !important;
 }
 
-.tab-inactive:hover {
-  color: var(--text-secondary-bright) !important;
-  background: rgba(255, 255, 255, 0.04) !important;
+@media (hover: hover) {
+@media (hover: hover) {
+    .tab-inactive:hover {
+      color: var(--text-secondary-bright) !important;
+      background: rgba(255, 255, 255, 0.04) !important;
+    }
+}
 }
 
 /* 4. 🎛️ Flat Filter & Sort Container (60% Surface / 30% Off-White / 10% Blue Accent) */
@@ -173,11 +177,15 @@ body::-webkit-scrollbar {
   padding: 8px 16px !important;
 }
 
-.pill:hover {
-  background: var(--bg-dominant-hover) !important;
-  color: var(--text-secondary-bright) !important;
-  border-color: var(--accent-blue-primary) !important;
-  transform: none !important;
+@media (hover: hover) {
+@media (hover: hover) {
+    .pill:hover {
+      background: var(--bg-dominant-hover) !important;
+      color: var(--text-secondary-bright) !important;
+      border-color: var(--accent-blue-primary) !important;
+      transform: none !important;
+    }
+}
 }
 
 .pill.active {
@@ -194,10 +202,14 @@ body::-webkit-scrollbar {
   border-radius: 10px !important;
 }
 
-.sort-toggle-btn:hover {
-  border-color: var(--accent-blue-primary) !important;
-  color: var(--text-secondary-bright) !important;
-  transform: none !important;
+@media (hover: hover) {
+@media (hover: hover) {
+    .sort-toggle-btn:hover {
+      border-color: var(--accent-blue-primary) !important;
+      color: var(--text-secondary-bright) !important;
+      transform: none !important;
+    }
+}
 }
 
 .sort-toggle-btn.active {
@@ -213,9 +225,21 @@ body::-webkit-scrollbar {
   color: #ef4444 !important;
 }
 
-.sort-toggle-btn.reset-btn:hover {
-  background: rgba(239, 68, 68, 0.18) !important;
-  border-color: #ef4444 !important;
+@media (hover: hover) {
+@media (hover: hover) {
+    .sort-toggle-btn.reset-btn:hover {
+      background: rgba(239, 68, 68, 0.18) !important;
+      border-color: #ef4444 !important;
+    }
+}
+}
+
+.sort-toggle-btn.reset-btn:active,
+.sort-toggle-btn.reset-btn.press-active {
+  background: rgba(239, 68, 68, 0.25) !important;
+  border-color: #dc2626 !important;
+  transform: translateY(1px) scale(0.96) !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* 5. 🔒 [RESTORED & FROZEN] Stock Card Styles are 100% untouched & left to original market.css */
@@ -294,10 +318,14 @@ body::-webkit-scrollbar {
   transition: all 0.25s ease !important;
 }
 
-.danger-zone-card:hover {
-  background: #050505 !important;
-  border-color: rgba(239, 68, 68, 0.85) !important;
-  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.85), 0 0 28px rgba(239, 68, 68, 0.4) !important;
+@media (hover: hover) {
+@media (hover: hover) {
+    .danger-zone-card:hover {
+      background: #050505 !important;
+      border-color: rgba(239, 68, 68, 0.85) !important;
+      box-shadow: 0 10px 36px rgba(0, 0, 0, 0.85), 0 0 28px rgba(239, 68, 68, 0.4) !important;
+    }
+}
 }
 
 .danger-zone-actions .danger-btn,
@@ -327,10 +355,14 @@ body::-webkit-scrollbar {
   box-shadow: 0 4px 14px rgba(220, 38, 38, 0.3) !important;
 }
 
-.danger-btn:hover {
-  background: #b91c1c !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45) !important;
+@media (hover: hover) {
+@media (hover: hover) {
+    .danger-btn:hover {
+      background: #b91c1c !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.45) !important;
+    }
+}
 }
 
 .danger-btn:active {
@@ -346,11 +378,15 @@ body::-webkit-scrollbar {
   box-shadow: none !important;
 }
 
-.danger-zone-actions .reset-room-btn:hover {
-  background: rgba(239, 68, 68, 0.28) !important;
-  border-color: rgba(239, 68, 68, 0.8) !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3) !important;
+@media (hover: hover) {
+@media (hover: hover) {
+    .danger-zone-actions .reset-room-btn:hover {
+      background: rgba(239, 68, 68, 0.28) !important;
+      border-color: rgba(239, 68, 68, 0.8) !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3) !important;
+    }
+}
 }
 
 .danger-zone-actions .reset-room-btn:active {
@@ -364,10 +400,14 @@ body::-webkit-scrollbar {
   box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3) !important;
 }
 
-.transfer-gm-btn:hover {
-  background: #b45309 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.45) !important;
+@media (hover: hover) {
+@media (hover: hover) {
+    .transfer-gm-btn:hover {
+      background: #b45309 !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 6px 20px rgba(217, 119, 6, 0.45) !important;
+    }
+}
 }
 
 .transfer-gm-btn:active {

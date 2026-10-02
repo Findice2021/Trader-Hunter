@@ -165,6 +165,143 @@ export class MarketController {
       });
     }
 
+    if (this.renderer.openFinanceModalBtn) {
+      this.renderer.openFinanceModalBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.renderer.financeModal.style.display = 'flex';
+        this.renderer.financeModal.classList.add('show');
+      });
+    }
+
+    if (this.renderer.closeFinanceModalBtn) {
+      this.renderer.closeFinanceModalBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.renderer.financeModal.classList.remove('show');
+        this.renderer.financeModal.style.display = 'none';
+        
+        // Reset state
+        this.renderer.portfolioRenderer.managementTablesRenderer.selectedFinancePlayerUid = null;
+        if (this.renderer.financeAmountContainer) this.renderer.financeAmountContainer.style.display = 'none';
+        if (this.renderer.financeAmountInput) this.renderer.financeAmountInput.value = '';
+        if (this.renderer.confirmFinanceModalBtn) {
+          this.renderer.confirmFinanceModalBtn.disabled = true;
+          this.renderer.confirmFinanceModalBtn.style.opacity = '0.5';
+          this.renderer.confirmFinanceModalBtn.style.cursor = 'not-allowed';
+        }
+        
+        // Re-render to clear selection styling
+        this.refreshManagementView();
+      });
+    }
+
+    if (this.renderer.confirmFinanceModalBtn) {
+      this.renderer.confirmFinanceModalBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const selectedUid = this.renderer.portfolioRenderer.managementTablesRenderer.selectedFinancePlayerUid;
+        const amountStr = this.renderer.financeAmountInput.value;
+        const amount = parseInt(amountStr, 10);
+        
+        if (selectedUid && !isNaN(amount) && amount > 0) {
+          this.renderer.confirmFinanceModalBtn.disabled = true;
+          this.renderer.confirmFinanceModalBtn.textContent = 'กำลังหักเงิน...';
+          
+          await this.tradeController.deductPlayerExpense(selectedUid, amount);
+          
+          // Reset after success
+          this.renderer.financeAmountInput.value = '';
+          this.renderer.confirmFinanceModalBtn.textContent = 'ยืนยัน';
+          this.renderer.confirmFinanceModalBtn.disabled = true;
+          this.renderer.confirmFinanceModalBtn.style.opacity = '0.5';
+          this.renderer.confirmFinanceModalBtn.style.cursor = 'not-allowed';
+          if (this.renderer.financeAmountContainer) this.renderer.financeAmountContainer.style.display = 'none';
+          this.renderer.portfolioRenderer.managementTablesRenderer.selectedFinancePlayerUid = null;
+          
+          // Trigger a re-render to clear selection UI
+          this.refreshManagementView();
+        }
+      });
+    }
+
+    // Setup preset buttons for finance modal
+    if (this.renderer.financePresetBtns) {
+      this.renderer.financePresetBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          // Reset all buttons visual state
+          this.renderer.financePresetBtns.forEach(b => {
+            b.classList.remove('active-preset');
+          });
+          if (this.renderer.financeCustomBtn) {
+            this.renderer.financeCustomBtn.classList.remove('active-custom');
+          }
+          
+          // Highlight clicked button
+          btn.classList.add('active-preset');
+          
+          // Hide custom input and set value
+          if (this.renderer.financeAmountInput) {
+            this.renderer.financeAmountInput.style.display = 'none';
+            this.renderer.financeAmountInput.value = btn.getAttribute('data-amount');
+          }
+          
+          // Enable confirm button
+          if (this.renderer.confirmFinanceModalBtn) {
+            this.renderer.confirmFinanceModalBtn.disabled = false;
+            this.renderer.confirmFinanceModalBtn.style.opacity = '1';
+            this.renderer.confirmFinanceModalBtn.style.cursor = 'pointer';
+          }
+        });
+      });
+    }
+
+    if (this.renderer.financeCustomBtn) {
+      this.renderer.financeCustomBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // Reset preset buttons visual state
+        if (this.renderer.financePresetBtns) {
+          this.renderer.financePresetBtns.forEach(b => {
+            b.classList.remove('active-preset');
+          });
+        }
+        
+        // Highlight custom button
+        this.renderer.financeCustomBtn.classList.add('active-custom');
+        
+        // Show and clear custom input
+        if (this.renderer.financeAmountInput) {
+          this.renderer.financeAmountInput.style.display = 'block';
+          this.renderer.financeAmountInput.value = '';
+          this.renderer.financeAmountInput.focus();
+        }
+        
+        // Disable confirm button until they type
+        if (this.renderer.confirmFinanceModalBtn) {
+          this.renderer.confirmFinanceModalBtn.disabled = true;
+          this.renderer.confirmFinanceModalBtn.style.opacity = '0.5';
+          this.renderer.confirmFinanceModalBtn.style.cursor = 'not-allowed';
+        }
+      });
+    }
+
+    // Amount input typing validation for custom amount
+    if (this.renderer.financeAmountInput) {
+      this.renderer.financeAmountInput.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        const confirmBtn = this.renderer.confirmFinanceModalBtn;
+        if (confirmBtn) {
+          if (!isNaN(val) && val > 0) {
+            confirmBtn.disabled = false;
+            confirmBtn.style.opacity = '1';
+            confirmBtn.style.cursor = 'pointer';
+          } else {
+            confirmBtn.disabled = true;
+            confirmBtn.style.opacity = '0.5';
+            confirmBtn.style.cursor = 'not-allowed';
+          }
+        }
+      });
+    }
+
     // 3. Tab Navigation & Trade Form Events
     this.renderer.bindTabEvents(async (tab) => {
       if (tab === 'portfolio') {
@@ -206,45 +343,11 @@ export class MarketController {
     const session = this.playerSessionService.getRoomSession(lastRoomCode);
     if (!session || !session.sessionToken) return false;
 
-    if (typeof this.renderer.setLobbyChecking === 'function') {
-      this.renderer.setLobbyChecking(true);
-    }
-
-    try {
-      const sessionInfo = await this.lobbyController.sessionCoordinator.inspectRoomAndSession(lastRoomCode);
-      if (!sessionInfo || !sessionInfo.isAllowed || !sessionInfo.roomExists) {
-        this.playerSessionService.clearRoomSession(lastRoomCode);
-        return false;
-      }
-
-      const { roomData, savedMember, members } = sessionInfo;
-      const sessionToken = session.sessionToken;
-
-      const hasTokenInSaved = Boolean(savedMember || (roomData?.savedMembers && roomData.savedMembers[sessionToken]));
-      const hasTokenInMembers = Boolean(members && Object.values(members).some(m => m && m.sessionToken === sessionToken));
-
-      if (!hasTokenInSaved && !hasTokenInMembers) {
-        this.playerSessionService.clearRoomSession(lastRoomCode);
-        return false;
-      }
-
-      // Perform seamless join and activate realtime listeners
-      const joinSuccess = await this.lobbyController.joinOrCreateRoom(lastRoomCode);
-      if (joinSuccess) {
-        this.activateBoardRealtimeListener();
-        this.renderer.showTopToast("RECONNECTED", `เชื่อมต่อห้อง ${lastRoomCode} เดิมเรียบร้อยแล้ว`, "success");
-        return true;
-      }
-    } catch (e) {
-      console.warn("[MarketController] Auto-reconnect failed:", e);
-    } finally {
-      if (typeof this.renderer.setLobbyChecking === 'function') {
-        this.renderer.setLobbyChecking(false);
-      }
+    if (this.lobbyController && this.lobbyController.updateRoomCodeSlots) {
+      this.lobbyController.updateRoomCodeSlots(lastRoomCode);
     }
     return false;
   }
-
   /**
    * Resyncs board state and player portfolio UI when waking up from background or device sleep.
    */
@@ -412,6 +515,12 @@ export class MarketController {
         await this.tradeController.payPlayerSalary(playerUid);
       }
     );
+    this.renderer.updateGMPlayerExpenseModalUI(
+      roomData.members,
+      async (playerUid, amount) => {
+        await this.tradeController.deductPlayerExpense(playerUid, amount);
+      }
+    );
     this.renderer.updateGMPlayerDividendUI(
       roomData.members,
       this.state.boardStocks,
@@ -429,3 +538,5 @@ export class MarketController {
     );
   }
 }
+
+

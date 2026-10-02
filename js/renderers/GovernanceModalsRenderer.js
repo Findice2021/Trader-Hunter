@@ -98,7 +98,7 @@ export class GovernanceModalsRenderer {
             <div class="gm-transfer-avatar">${initial}</div>
             <div>
               <div class="gm-transfer-player-name">${player.displayName || 'Player'}</div>
-              <div class="gm-transfer-player-stats">Cash: ${cashFormatted} ฿</div>
+              <div class="gm-transfer-player-stats">Cash: ${cashFormatted} </div>
             </div>
           </div>
           <div class="gm-transfer-radio-indicator"></div>
@@ -222,7 +222,7 @@ export class GovernanceModalsRenderer {
           <div class="kick-player-avatar">${initial}</div>
           <div>
             <div class="kick-player-name">${player.displayName || 'Player'}</div>
-            <div class="kick-player-stats">Cash: ${cashFormatted} ฿</div>
+            <div class="kick-player-stats">Cash: ${cashFormatted} </div>
           </div>
         </div>
         <div class="kick-player-radio-indicator"></div>

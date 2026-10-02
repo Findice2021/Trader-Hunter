@@ -64,9 +64,11 @@
   transition: color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
 }
 
-.close-modal-btn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
+@media (hover: hover) {
+  .close-modal-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+  }
 }
 
 .close-modal-btn:active {
@@ -125,10 +127,12 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.confirm-btn.cancel-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
+@media (hover: hover) {
+  .confirm-btn.cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
 }
 
 /* ปุ่มยืนยัน Reset Prices (สีแดงเด่น) */
@@ -138,10 +142,12 @@
   box-shadow: 0 4px 12px rgba(250, 55, 95, 0.25);
 }
 
-.confirm-btn.reset-btn-confirm:hover {
-  background: #ff5277;              /* 👈 สีปุ่ม Reset เมื่อเอาเมาส์ไปวาง */
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(250, 55, 95, 0.35);
+@media (hover: hover) {
+  .confirm-btn.reset-btn-confirm:hover {
+    background: #ff5277;              /* 👈 สีปุ่ม Reset เมื่อเอาเมาส์ไปวาง */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(250, 55, 95, 0.35);
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -195,9 +201,11 @@
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.apple-modal-close:hover {
-  background: rgba(255, 255, 255, 0.16);
-  color: #ffffff;
+@media (hover: hover) {
+  .apple-modal-close:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+  }
 }
 
 .apple-modal-close:active {
@@ -279,10 +287,12 @@
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.apple-btn-gm:hover {
-  background: #0071e3;
-  transform: scale(1.02);
-  box-shadow: 0 6px 20px rgba(10, 132, 255, 0.5);
+@media (hover: hover) {
+  .apple-btn-gm:hover {
+    background: #0071e3;
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(10, 132, 255, 0.5);
+  }
 }
 
 .apple-btn-gm:active {
@@ -307,10 +317,12 @@
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.apple-btn-player:hover {
-  background: #28b84c;
-  transform: scale(1.02);
-  box-shadow: 0 6px 20px rgba(48, 209, 88, 0.5);
+@media (hover: hover) {
+  .apple-btn-player:hover {
+    background: #28b84c;
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(48, 209, 88, 0.5);
+  }
 }
 
 .apple-btn-player:active {
@@ -329,10 +341,12 @@
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.apple-btn-basic:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  transform: scale(1.02);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+@media (hover: hover) {
+  .apple-btn-basic:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+  }
 }
 
 .apple-btn-basic:active {
@@ -581,10 +595,12 @@ body.swal2-shown .page-shell {
   line-height: 1;
 }
 
-.edit-player-name-btn:hover {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.35);
-  color: #34d399;
+@media (hover: hover) {
+  .edit-player-name-btn:hover {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.35);
+    color: #34d399;
+  }
 }
 
 .edit-player-name-btn:active {

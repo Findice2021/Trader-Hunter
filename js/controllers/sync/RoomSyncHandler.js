@@ -26,6 +26,7 @@ export class RoomSyncHandler {
     this.prevInterestTimestamp = null;
     this.prevDividendTimestamp = null;
     this.prevDebtInterestTimestamp = null;
+    this.prevExpenseTimestamp = null;
     this.prevProcessedTimestamp = null;
     this.prevGMOrderIds = null;
     this.prevMemberUids = null;
@@ -384,6 +385,18 @@ export class RoomSyncHandler {
             "DEBT INTEREST RECEIVED",
             `คุณได้รับดอกเบี้ยเงินกู้จำนวน ${Number(myDebtInterest.amount || 0).toLocaleString('en-US')} บาทจาก GM`,
             "success"
+          );
+        }
+
+        const lastExpenseMap = roomData.lastExpenseDeducted || {};
+        const myExpense = lastExpenseMap[currentUid];
+        if (myExpense && myExpense.timestamp && myExpense.timestamp !== this.prevExpenseTimestamp) {
+          this.prevExpenseTimestamp = myExpense.timestamp;
+          if (this.soundService) this.soundService.playDownPrice();
+          this.renderer.showTopToast(
+            "EXPENSE DEDUCTED",
+            `คุณถูกหักค่าใช้จ่ายจำนวน ${Number(myExpense.amount || 0).toLocaleString('en-US')} บาทโดย GM`,
+            "warning"
           );
         }
       }

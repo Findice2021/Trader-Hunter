@@ -177,6 +177,12 @@ export class MarketBoardController {
   bindResetBtn() {
     if (!this.renderer.resetBtn) return;
     this.renderer.resetBtn.addEventListener('click', () => {
+      // Simulate physical button press
+      this.renderer.resetBtn.classList.add('press-active');
+      setTimeout(() => {
+        if (this.renderer.resetBtn) this.renderer.resetBtn.classList.remove('press-active');
+      }, 150);
+
       // Trigger smooth 360-degree spin animation on reset icon
       const icon = this.renderer.resetBtn.querySelector('.reset-icon');
       if (icon) {

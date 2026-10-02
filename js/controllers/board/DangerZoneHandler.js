@@ -130,7 +130,7 @@ export class DangerZoneHandler {
     const confirmResetRoomBtn = document.getElementById('confirmResetRoomBtn');
     if (confirmResetRoomBtn) {
       confirmResetRoomBtn.addEventListener('click', async () => {
-        if (this.state.role !== 'game_master' || this.state.isSpectating) return;
+        if (this.state.isSpectating) return;
         try {
           closeResetRoomConfirm();
 
@@ -227,50 +227,7 @@ export class DangerZoneHandler {
     if (playerResetGameBtn) {
       playerResetGameBtn.addEventListener('click', async () => {
         if (this.state.role !== 'player') return;
-
-        // First confirmation
-        const firstConfirm = await this.renderer.showConfirmAlert(
-          "รีเซ็ตเกม?",
-          "การดำเนินการนี้จะรีเซ็ตกระดานหุ้น ล้างคำสั่งซื้อขายทั้งหมด และนำผู้เล่นทุกคนรวมทั้งคุณกลับสู่หน้าล็อบบี้ คุณแน่ใจหรือไม่?",
-          "ยืนยัน",
-          "ยกเลิก"
-        );
-        if (!firstConfirm || !firstConfirm.isConfirmed) return;
-
-        // Second confirmation (double safety)
-        const secondConfirm = await this.renderer.showConfirmAlert(
-          "⚠️ ยืนยันอีกครั้ง",
-          "ข้อมูลพอร์ตของผู้เล่นทุกคนจะถูกรีเซ็ตกลับค่าเริ่มต้น ไม่สามารถยกเลิกได้ ยืนยันการรีเซ็ตเกมหรือไม่?",
-          "ยืนยัน",
-          "ยกเลิก"
-        );
-        if (!secondConfirm || !secondConfirm.isConfirmed) return;
-
-        try {
-          const code = this.state.roomCode;
-          if (!code) return;
-
-          const resetStocks = this.state.getResetStocks();
-
-          if (this.marketController) {
-            this.marketController.unsubscribeAll();
-          }
-
-          await this.firebaseService.resetRoomWithKickAll(code, resetStocks);
-
-          if (this.playerSessionService && code) {
-            this.playerSessionService.clearRoomSession(code);
-          }
-
-          this.state.reset();
-          this.renderer.hideGMTransferModal();
-          this.renderer.hidePlayerNameModal();
-          this.renderer.showLobby();
-          this.renderer.showErrorAlert("รีเซ็ตเกมสำเร็จ", "ทำการรีเซ็ตข้อมูลเกมและนำผู้เล่นทุกคนกลับสู่ล็อบบี้เรียบร้อยแล้ว");
-        } catch (error) {
-          console.error("[DangerZoneHandler] Player failed to reset game:", error);
-          this.renderer.showErrorAlert("เกิดข้อผิดพลาด", "ไม่สามารถรีเซ็ตเกมได้ โปรดลองอีกครั้ง");
-        }
+        this.renderer.openConfirmResetRoomModal();
       });
     }
   }

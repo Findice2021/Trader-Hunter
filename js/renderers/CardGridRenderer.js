@@ -13,7 +13,10 @@ export class CardGridRenderer {
 
   renderGrid(cards) {
     if (!this.priceGrid) return;
-    this.priceGrid.innerHTML = '';
+    // Clear safely without innerHTML to preserve event listeners and internal state
+    while (this.priceGrid.firstChild) {
+      this.priceGrid.removeChild(this.priceGrid.firstChild);
+    }
     cards.forEach(card => {
       this.priceGrid.appendChild(card);
     });

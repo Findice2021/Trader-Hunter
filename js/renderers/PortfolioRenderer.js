@@ -34,6 +34,10 @@ export class PortfolioRenderer {
     this.managementTablesRenderer.updateGMPlayerSalaryUI(gmPlayerSalaryBody, members, onPaySalary);
   }
 
+  updateGMPlayerExpenseModalUI(financePlayerList, members, onDeductExpense) {
+    this.managementTablesRenderer.updateGMPlayerExpenseModalUI(financePlayerList, members, onDeductExpense);
+  }
+
   updateGMPlayerDividendUI(gmPlayerDividendBody, members, boardStocks = {}, masterStocks = {}, originalCards = [], onPayDividend = null) {
     this.managementTablesRenderer.updateGMPlayerDividendUI(gmPlayerDividendBody, members, boardStocks, masterStocks, originalCards, onPayDividend);
   }

@@ -841,6 +841,9 @@
         <div class="p-2 sm:p-4">
           <div class="gm-pending-title-wrapper flex items-center justify-between bg-gray-950/60 rounded-lg px-5 py-3 mb-5">
             <h3 class="text-xs font-black text-emerald-400 uppercase tracking-widest">PLAYER SALARY MANAGEMENT</h3>
+            <button id="openFinanceModalBtn" class="finance-open-btn">
+              Expenses
+            </button>
           </div>
           <div class="table-container overflow-x-auto" id="gmPlayerSalaryTableContainer">
             <table class="gm-pending-orders-table w-full text-left text-xs text-gray-300 min-w-[480px]">
@@ -890,7 +893,7 @@
       <section id="gmPlayerDebtInterestSection" class="w-full mb-10 max-w-5xl mx-auto" style="display: block;">
         <div class="p-2 sm:p-4">
           <div class="gm-pending-title-wrapper flex items-center justify-between bg-gray-950/60 rounded-lg px-5 py-3 mb-5">
-            <h3 class="text-xs font-black text-white uppercase tracking-widest">PLAYER DEBT INTEREST MANAGEMENT</h3>
+            <h3 class="text-xs font-black text-white uppercase tracking-widest">PLAYER INTEREST MANAGEMENT</h3>
           </div>
           <div class="table-container overflow-x-auto" id="gmPlayerDebtInterestTableContainer">
             <table class="gm-pending-orders-table w-full text-left text-xs text-gray-300 min-w-[480px]">
@@ -960,6 +963,48 @@
           ยกเลิก
         </button>
         <button type="button" id="confirmDirectTransferBtn" class="apple-btn-gm" style="background: #f59e0b; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);" disabled>
+          ยืนยัน
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Apple-Style Player Expense Modal Card -->
+  <div id="financeModal" class="apple-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="financeTitle" style="display: none;">
+    <div class="apple-modal-card flex flex-col items-center relative min-w-[320px] max-w-[500px]">
+      <div class="apple-modal-icon mb-3" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #ef4444;">
+        <svg xmlns="http://www.w3.org/2000/svg" style="width: 28px; height: 28px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 id="financeTitle" class="apple-modal-title text-red-500 font-bold">ค่าใช้จ่าย</h3>
+      <p class="apple-modal-subtitle text-xs text-gray-300 mb-4 text-center">
+        เลือกผู้เล่นที่ต้องการหักค่าใช้จ่าย
+      </p>
+      
+      <!-- Player Finance List -->
+      <div id="financePlayerList" class="kick-player-list w-full max-h-[40vh] overflow-y-auto pr-2 mb-4">
+        <!-- Dynamically rendered list of player finance rows -->
+      </div>
+      
+      <!-- Amount Input (Hidden until player selected) -->
+      <div id="financeAmountContainer" class="w-full" style="display: none; margin-bottom: 24px;">
+        <label class="block text-xs font-bold text-gray-400 mb-2 text-center uppercase tracking-wider" style="margin-bottom: 12px;">จำนวนเงินที่ต้องการหัก</label>
+        
+        <div class="finance-preset-group">
+          <button type="button" class="finance-preset-btn" data-amount="5000">5,000</button>
+          <button type="button" class="finance-preset-btn" data-amount="10000">10,000</button>
+          <button type="button" id="financeCustomBtn" class="finance-custom-btn">กรอกเอง</button>
+        </div>
+
+        <input type="number" id="financeAmountInput" class="apple-modal-input w-full text-center text-red-400 font-bold text-xl" style="display: none;" placeholder="ระบุจำนวนเงิน..." min="0" />
+      </div>
+
+      <div class="apple-modal-actions w-full">
+        <button type="button" id="closeFinanceModalBtn" class="apple-btn-player" style="background: #475569; box-shadow: none;">
+          ยกเลิก
+        </button>
+        <button type="button" id="confirmFinanceModalBtn" class="apple-btn-danger kick-confirm-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
           ยืนยัน
         </button>
       </div>

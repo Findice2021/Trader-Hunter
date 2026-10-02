@@ -179,6 +179,74 @@ export class GMManagementHandler {
     }
   }
 
+  async deductPlayerExpense(playerUid, amount) {
+    try {
+      const roomSnapshot = await this.firebaseService.getRoomStateSnapshot(this.state.roomCode);
+      const roomData = roomSnapshot ? roomSnapshot.val() : null;
+
+      if (!roomData || !roomData.members || !roomData.members[playerUid]) {
+        this.renderer.showErrorAlert("Error", "ไม่พบข้อมูลผู้เล่นในห้องเกม");
+        return;
+      }
+
+      const player = roomData.members[playerUid];
+      const playerName = player.displayName || 'Player';
+
+      const confirmResult = await this.renderer.showConfirmAlert(
+        "Confirm Expense Deduction",
+        `คุณต้องการหักค่าใช้จ่าย ${amount.toLocaleString()} บาท จากผู้เล่น "${playerName}" หรือไม่?`,
+        "YES",
+        "NO"
+      );
+
+      if (!confirmResult || !confirmResult.isConfirmed) return;
+
+      await this.captureUndoSnapshot();
+
+      // Fetch fresh snapshot to avoid race condition
+      const freshSnap = await this.firebaseService.getRoomStateSnapshot(this.state.roomCode);
+      const freshData = freshSnap ? freshSnap.val() : null;
+      const freshPlayer = freshData?.members?.[playerUid];
+      if (!freshPlayer) {
+        this.renderer.showErrorAlert("Error", "ไม่พบข้อมูลผู้เล่นในห้องเกม");
+        return;
+      }
+
+      const currentCash = freshPlayer.portfolio?.cash ?? 20000;
+      if (currentCash < amount) {
+        this.renderer.showErrorAlert("Insufficient Funds", `ผู้เล่น "${playerName}" มีเงินสดไม่เพียงพอ (มีอยู่: ${currentCash.toLocaleString()} บาท)`);
+        return;
+      }
+
+      const newCash = currentCash - amount;
+      const sessionToken = freshPlayer.sessionToken || null;
+
+      const updates = {
+        [`members/${playerUid}/portfolio/cash`]: newCash,
+        [`lastExpenseDeducted/${playerUid}`]: {
+          amount: amount,
+          timestamp: Date.now()
+        }
+      };
+
+      // Update persistent snapshot
+      if (sessionToken && freshData.savedMembers && freshData.savedMembers[sessionToken]) {
+        updates[`savedMembers/${sessionToken}/portfolio/cash`] = newCash;
+      }
+
+      await this.firebaseService.updateRoom(this.state.roomCode, updates);
+
+      this.renderer.showTopToast(
+        "EXPENSE DEDUCTED", 
+        `หักค่าใช้จ่าย ${amount.toLocaleString()} บาท จาก "${playerName}" เรียบร้อยแล้ว`,
+        "success"
+      );
+    } catch (error) {
+      console.error("Failed to deduct expense from player:", error);
+      this.renderer.showErrorAlert("Error", "ไม่สามารถหักค่าใช้จ่ายผู้เล่นได้");
+    }
+  }
+
   async payPlayerDividend(playerUid) {
     try {
       const roomSnapshot = await this.firebaseService.getRoomStateSnapshot(this.state.roomCode);

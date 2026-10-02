@@ -66,6 +66,10 @@ export class TradeController {
     return this.gmHandler.payPlayerSalary(playerUid);
   }
 
+  async deductPlayerExpense(playerUid, amount) {
+    return this.gmHandler.deductPlayerExpense(playerUid, amount);
+  }
+
   /**
    * GM Dividend Payment handler for a single player.
    */
