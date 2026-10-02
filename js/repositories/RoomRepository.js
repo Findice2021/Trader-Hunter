@@ -190,10 +190,300 @@ export class RoomRepository {
     try {
       const roomRef = this.getRoomRef(roomCode);
       const boardRef = ref(this.realtimeDb, `traderHunter/boards/${roomCode}`);
+      const expRef = ref(this.realtimeDb, `traderHunter/roomExpirations/${roomCode}`);
+      await set(roomRef, null);
+      await set(boardRef, null);
+      await set(expRef, null);
+    } catch (e) {
+      console.error("[RoomRepository] Failed to purge empty room data:", e);
+    }
+  }
+
+  
+  async setRoomExpirationIndex(roomCode, expiresAt) {
+    if (!roomCode || !expiresAt) return;
+    try {
+      const expRef = ref(this.realtimeDb, `traderHunter/roomExpirations/${roomCode}`);
+      await set(expRef, expiresAt);
+    } catch (e) {
+      console.warn("Failed to set room expiration index:", e);
+    }
+  }
+
+  async garbageCollectExpiredRooms() {
+    try {
+      const expNodeRef = ref(this.realtimeDb, 'traderHunter/roomExpirations');
+      const snap = await get(expNodeRef);
+      if (snap.exists()) {
+        const expirations = snap.val();
+        const now = Date.now();
+        for (const [roomCode, expiresAt] of Object.entries(expirations)) {
+          if (expiresAt && now > expiresAt) {
+            console.log(`[Garbage Collection] Purging expired room: ${roomCode}`);
+            await this.deleteRoomData(roomCode);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Garbage collection failed:", e);
+    }
+  }
+
+  
+  
+  
+  async _getRoomCodes(firestore) {
+    let roomCodes = [];
+    try {
+      const cachedRooms = sessionStorage.getItem('traderHunter_roomCodes');
+      const cacheTime = sessionStorage.getItem('traderHunter_roomCodes_time');
+      const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
+      if (cachedRooms && cacheTime && (Date.now() - parseInt(cacheTime)) < CACHE_TTL) {
+        roomCodes = JSON.parse(cachedRooms);
+      } else {
+        const { getDocs, collection } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+        const roomsSnap = await getDocs(collection(firestore, 'games/traderHunter/rooms'));
+        roomCodes = roomsSnap.docs.map(d => d.id);
+        
+        sessionStorage.setItem('traderHunter_roomCodes', JSON.stringify(roomCodes));
+        sessionStorage.setItem('traderHunter_roomCodes_time', Date.now().toString());
+      }
+    } catch (e) {
+      console.warn("Failed to fetch room codes:", e);
+    }
+    return roomCodes;
+  }
+
+  async checkServerCapacity(maxConnections = 95) {
+    try {
+      const { get } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+      const firestore = this.firebaseService.firestore;
+      if (!firestore) return true;
+
+      // Use Cache to save Firestore Quotas
+      const roomCodes = await this._getRoomCodes(firestore);
+      if (!roomCodes || roomCodes.length === 0) return true;
+      
+      let totalOnline = 0;
+      
+      // Fetch all rooms in parallel (RTDB Bandwidth is virtually free)
+      const promises = roomCodes.map(async (code) => {
+        try {
+          const roomRef = ref(this.realtimeDb, `traderHunter/gameRooms/${code}`);
+          const snap = await get(roomRef);
+          if (snap.exists()) {
+            const data = snap.val();
+            if (data.members) {
+              const onlineCount = Object.values(data.members).filter(m => m && m.online !== false).length;
+              totalOnline += onlineCount;
+            }
+          }
+        } catch (e) {
+          // Ignore
+        }
+      });
+      
+      await Promise.all(promises);
+      
+      if (totalOnline >= maxConnections) {
+        console.warn(`[Capacity] Server full. Current: ${totalOnline}/${maxConnections}`);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      console.warn("Failed to check server capacity:", e);
+      return true; // Fail open
+    }
+  }
+
+  registerGlobalPresence() {
+    // Disabled in No-Rules mode
+  }
+
+  async setRoomExpirationIndex(roomCode, expiresAt) {
+    // Disabled in No-Rules mode
+  }
+
+  async garbageCollectExpiredRooms() {
+    try {
+      const { get } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+      const firestore = this.firebaseService.firestore;
+      if (!firestore) return;
+
+      // Use Cache to save Firestore Quotas
+      const roomCodes = await this._getRoomCodes(firestore);
+      if (!roomCodes || roomCodes.length === 0) return;
+      
+      const now = Date.now();
+      
+      const promises = roomCodes.map(async (code) => {
+        try {
+          const roomRef = ref(this.realtimeDb, `traderHunter/gameRooms/${code}`);
+          const snap = await get(roomRef);
+          if (snap.exists()) {
+            const data = snap.val();
+            if (data.expiresAt && now > data.expiresAt) {
+              console.log(`[Garbage Collection] Purging expired room: ${code}`);
+              await this.deleteRoomData(code);
+            } else if (data.status === 'RESET' || data.isReset) {
+              console.log(`[Garbage Collection] Purging reset room: ${code}`);
+              await this.deleteRoomData(code);
+            }
+          }
+        } catch (e) {}
+      });
+      
+      await Promise.all(promises);
+    } catch (e) {
+      console.warn("Garbage collection failed:", e);
+    }
+  }
+
+  async deleteRoomData(roomCode) {
+    if (!roomCode) return;
+    try {
+      const roomRef = this.getRoomRef(roomCode);
+      const boardRef = ref(this.realtimeDb, `traderHunter/boards/${roomCode}`);
+      const expRef = ref(this.realtimeDb, `traderHunter/roomExpirations/${roomCode}`);
+      await set(roomRef, null);
+      await set(boardRef, null);
+      await set(expRef, null);
+    } catch (e) {
+      console.error("[RoomRepository] Failed to purge empty room data:", e);
+    }
+  }
+
+  
+  async setRoomExpirationIndex(roomCode, expiresAt) {
+    if (!roomCode || !expiresAt) return;
+    try {
+      const expRef = ref(this.realtimeDb, `traderHunter/roomExpirations/${roomCode}`);
+      await set(expRef, expiresAt);
+    } catch (e) {
+      console.warn("Failed to set room expiration index:", e);
+    }
+  }
+
+  async garbageCollectExpiredRooms() {
+    try {
+      const expNodeRef = ref(this.realtimeDb, 'traderHunter/roomExpirations');
+      const snap = await get(expNodeRef);
+      if (snap.exists()) {
+        const expirations = snap.val();
+        const now = Date.now();
+        for (const [roomCode, expiresAt] of Object.entries(expirations)) {
+          if (expiresAt && now > expiresAt) {
+            console.log(`[Garbage Collection] Purging expired room: ${roomCode}`);
+            await this.deleteRoomData(roomCode);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Garbage collection failed:", e);
+    }
+  }
+
+  
+  
+  async checkServerCapacity(maxConnections = 95) {
+    try {
+      const { getDocs, collection } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+      const { get } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+      
+      const firestore = this.firebaseService.firestore;
+      if (!firestore) return true;
+
+      // Get all known room codes
+      const roomsSnap = await getDocs(collection(firestore, 'games/traderHunter/rooms'));
+      const roomCodes = roomsSnap.docs.map(d => d.id);
+      
+      let totalOnline = 0;
+      
+      // Fetch all rooms in parallel
+      const promises = roomCodes.map(async (code) => {
+        try {
+          const roomRef = ref(this.realtimeDb, `traderHunter/gameRooms/${code}`);
+          const snap = await get(roomRef);
+          if (snap.exists()) {
+            const data = snap.val();
+            if (data.members) {
+              const onlineCount = Object.values(data.members).filter(m => m && m.online !== false).length;
+              totalOnline += onlineCount;
+            }
+          }
+        } catch (e) {
+          // Ignore permission denied for rooms they might not have access to (though they should)
+        }
+      });
+      
+      await Promise.all(promises);
+      
+      if (totalOnline >= maxConnections) {
+        console.warn(`[Capacity] Server full. Current: ${totalOnline}/${maxConnections}`);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      console.warn("Failed to check server capacity:", e);
+      return true; // Fail open
+    }
+  }
+
+  registerGlobalPresence() {
+    // Disabled in No-Rules mode
+  }
+
+  async setRoomExpirationIndex(roomCode, expiresAt) {
+    // Disabled in No-Rules mode
+  }
+
+  async garbageCollectExpiredRooms() {
+    try {
+      const { getDocs, collection } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+      const { get } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+      
+      const firestore = this.firebaseService.firestore;
+      if (!firestore) return;
+
+      const roomsSnap = await getDocs(collection(firestore, 'games/traderHunter/rooms'));
+      const roomCodes = roomsSnap.docs.map(d => d.id);
+      
+      const now = Date.now();
+      
+      const promises = roomCodes.map(async (code) => {
+        try {
+          const roomRef = ref(this.realtimeDb, `traderHunter/gameRooms/${code}`);
+          const snap = await get(roomRef);
+          if (snap.exists()) {
+            const data = snap.val();
+            // Delete if explicitly expired, or reset, or no members and old
+            if (data.expiresAt && now > data.expiresAt) {
+              console.log(`[Garbage Collection] Purging expired room: ${code}`);
+              await this.deleteRoomData(code);
+            } else if (data.status === 'RESET' || data.isReset) {
+              console.log(`[Garbage Collection] Purging reset room: ${code}`);
+              await this.deleteRoomData(code);
+            }
+          }
+        } catch (e) {}
+      });
+      
+      await Promise.all(promises);
+    } catch (e) {
+      console.warn("Garbage collection failed:", e);
+    }
+  }
+
+  async deleteRoomData(roomCode) {
+    if (!roomCode) return;
+    try {
+      const roomRef = this.getRoomRef(roomCode);
+      const boardRef = ref(this.realtimeDb, `traderHunter/boards/${roomCode}`);
       await set(roomRef, null);
       await set(boardRef, null);
     } catch (e) {
-      console.error("[RoomRepository] Failed to purge empty room data:", e);
+      console.error("[RoomRepository] Failed to purge room data:", e);
     }
   }
 

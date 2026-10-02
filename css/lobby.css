@@ -331,13 +331,13 @@ html, body {
 
 @media (hover: hover) {
   .lobby-joy-btn:hover {
-    transform: translateY(var(--lobby-joy-btn-y)) scale(1.03) !important;
+    transform: translateY(var(--lobby-joy-btn-y)) !important;
     filter: brightness(1.12) drop-shadow(0 12px 24px rgba(0, 0, 0, 0.7)) !important;
   }
 }
 
 .lobby-joy-btn:active {
-  transform: translateY(var(--lobby-joy-btn-y)) scale(0.92) !important;
+  transform: translateY(var(--lobby-joy-btn-y)) !important;
   filter: brightness(0.9) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5)) !important;
 }
 
@@ -416,7 +416,7 @@ html, body {
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-@media (max-width: 768px), (max-height: 560px) {
+@media (pointer: coarse) and (max-width: 768px), (pointer: coarse) and (max-height: 560px) {
   #lobbyScreen.lobby-keyboard-active main,
   #lobbyScreen:has(#lobbyForm:focus-within) main {
     transform: translateY(-55px) !important;

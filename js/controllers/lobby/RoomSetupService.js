@@ -108,6 +108,7 @@ export class RoomSetupService {
           [user.uid]: initialMemberObj
         }, clientIp);
         await this.firebaseService.updateRoom(code, { expiresAt });
+        await this.firebaseService.setRoomExpirationIndex(code, expiresAt);
       }
     } else {
       if (members && members[user.uid]) {

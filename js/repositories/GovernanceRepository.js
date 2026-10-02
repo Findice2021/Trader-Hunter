@@ -381,6 +381,50 @@ export class GovernanceRepository {
   }
 
   // Realtime Database: Clear kicked player flag so they can rejoin cleanly later
+  
+  async transferPlayerProfile(roomCode, oldUid, newUid) {
+    if (!roomCode || !oldUid || !newUid) return { success: false, reason: 'Missing params' };
+    const roomRef = this.getRoomRef(roomCode);
+    
+    try {
+      const result = await runTransaction(roomRef, (currentData) => {
+        if (currentData === null) return currentData;
+        
+        const members = currentData.members || {};
+        if (!members[oldUid] || !members[newUid]) return; // Abort transaction if missing
+
+        const oldMember = members[oldUid];
+        const newMember = members[newUid];
+
+        // 1. Move old data to new member
+        newMember.displayName = oldMember.displayName;
+        newMember.portfolio = oldMember.portfolio;
+        if (oldMember.backupPlayerProfile) {
+          newMember.backupPlayerProfile = oldMember.backupPlayerProfile;
+        }
+
+        // 2. Delete old member
+        delete currentData.members[oldUid];
+
+        // 3. Migrate pending orders
+        if (currentData.pendingOrders) {
+          Object.values(currentData.pendingOrders).forEach(order => {
+            if (order && order.uid === oldUid) {
+              order.uid = newUid;
+            }
+          });
+        }
+
+        return currentData;
+      });
+
+      return { success: result.committed };
+    } catch (e) {
+      console.error("[GovernanceRepository] Failed to transfer profile:", e);
+      return { success: false, reason: e.message };
+    }
+  }
+
   async clearKickedMember(roomCode, uid) {
     if (!roomCode || !uid) return;
     try {

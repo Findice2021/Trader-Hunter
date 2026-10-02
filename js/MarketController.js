@@ -142,6 +142,9 @@ export class MarketController {
     }
 
     // 1. Bind Lobby Flow
+    // Fire and forget garbage collection on app load
+    this.firebaseService.garbageCollectExpiredRooms().catch(e => console.warn(e));
+
     this.lobbyController.bindLobbyEntrance((code) => {
       this.activateBoardRealtimeListener();
     });
@@ -207,7 +210,7 @@ export class MarketController {
           
           await this.tradeController.deductPlayerExpense(selectedUid, amount);
           
-          // Reset after success
+                    // Reset after success
           this.renderer.financeAmountInput.value = '';
           this.renderer.confirmFinanceModalBtn.textContent = 'ยืนยัน';
           this.renderer.confirmFinanceModalBtn.disabled = true;
@@ -218,6 +221,12 @@ export class MarketController {
           
           // Trigger a re-render to clear selection UI
           this.refreshManagementView();
+
+          // Close modal automatically
+          if (this.renderer.financeModal) {
+            this.renderer.financeModal.classList.remove('show');
+            this.renderer.financeModal.style.display = 'none';
+          }
         }
       });
     }

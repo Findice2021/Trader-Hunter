@@ -26,6 +26,19 @@ export class GovernanceModalsRenderer {
     this.closeKickPlayerModalBtn = document.getElementById('closeKickPlayerModalBtn');
 
     this.selectedKickPlayerUid = null;
+
+    // Transfer Profile Modal
+    this.transferProfileModal = document.getElementById('transferProfileModal');
+    this.transferProfileStep1 = document.getElementById('transferProfileStep1');
+    this.transferProfileStep2 = document.getElementById('transferProfileStep2');
+    this.transferProfileOldList = document.getElementById('transferProfileOldList');
+    this.transferProfileNewList = document.getElementById('transferProfileNewList');
+    this.transferProfileTargetName = document.getElementById('transferProfileTargetName');
+    this.closeTransferProfileModalBtn = document.getElementById('closeTransferProfileModalBtn');
+    this.backTransferProfileModalBtn = document.getElementById('backTransferProfileModalBtn');
+    this.confirmTransferProfileModalBtn = document.getElementById('confirmTransferProfileModalBtn');
+    this.selectedOldProfileUid = null;
+    this.selectedNewProfileUid = null;
     this.currentKickEligiblePlayers = [];
     this.onKickPlayerConfirmCallback = null;
     this._kickPlayerModalCleanup = null;
@@ -167,6 +180,116 @@ export class GovernanceModalsRenderer {
     if (this.gmDirectTransferModal) {
       this.gmDirectTransferModal.style.display = 'none';
     }
+  }
+
+  
+  showTransferProfileModal(offlinePlayers = [], onlinePlayers = [], onConfirm = null) {
+    if (!this.transferProfileModal) return;
+    
+    this.selectedOldProfileUid = null;
+    this.selectedNewProfileUid = null;
+    this.transferProfileStep1.style.display = 'block';
+    this.transferProfileStep2.style.display = 'none';
+    this.confirmTransferProfileModalBtn.disabled = true;
+    this.confirmTransferProfileModalBtn.style.opacity = '0.5';
+    this.confirmTransferProfileModalBtn.style.cursor = 'not-allowed';
+
+    // Render Step 1
+    this.transferProfileOldList.innerHTML = '';
+    if (offlinePlayers.length === 0) {
+      this.transferProfileOldList.innerHTML = '<div class="kick-player-empty text-center p-4 text-gray-500">ไม่มีตัวละครที่หลุดการเชื่อมต่อ</div>';
+    } else {
+      offlinePlayers.forEach(player => {
+        const item = document.createElement('div');
+        item.className = 'kick-player-item';
+        item.innerHTML = `
+          <div class="kick-player-info">
+            <div class="kick-player-avatar bg-gray-700">${(player.displayName || 'P').charAt(0).toUpperCase()}</div>
+            <div>
+              <div class="kick-player-name text-gray-400">${player.displayName || 'Player'} <span class="text-[10px] bg-red-900/50 text-red-400 px-1.5 py-0.5 rounded ml-1">Offline</span></div>
+              <div class="kick-player-stats">Cash: ${(player.portfolio?.cash || 0).toLocaleString('en-US')}</div>
+            </div>
+          </div>
+          <div class="kick-player-radio-indicator"></div>
+        `;
+        item.addEventListener('click', () => {
+          this.transferProfileOldList.querySelectorAll('.kick-player-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          this.selectedOldProfileUid = player.uid;
+          this.transferProfileTargetName.textContent = `[${player.displayName}]`;
+          
+          // Move to Step 2
+          setTimeout(() => {
+            this.transferProfileStep1.style.display = 'none';
+            this.transferProfileStep2.style.display = 'block';
+          }, 300);
+        });
+        this.transferProfileOldList.appendChild(item);
+      });
+    }
+
+    // Render Step 2
+    this.transferProfileNewList.innerHTML = '';
+    if (onlinePlayers.length === 0) {
+      this.transferProfileNewList.innerHTML = '<div class="kick-player-empty text-center p-4 text-gray-500">ไม่มีผู้เล่นออนไลน์ที่รับสิทธิ์ได้</div>';
+    } else {
+      onlinePlayers.forEach(player => {
+        const item = document.createElement('div');
+        item.className = 'kick-player-item';
+        item.innerHTML = `
+          <div class="kick-player-info">
+            <div class="kick-player-avatar bg-blue-900/50 text-blue-300">${(player.displayName || 'P').charAt(0).toUpperCase()}</div>
+            <div>
+              <div class="kick-player-name text-blue-300">${player.displayName || 'Player'}</div>
+            </div>
+          </div>
+          <div class="kick-player-radio-indicator"></div>
+        `;
+        item.addEventListener('click', () => {
+          this.transferProfileNewList.querySelectorAll('.kick-player-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          this.selectedNewProfileUid = player.uid;
+          this.confirmTransferProfileModalBtn.disabled = false;
+          this.confirmTransferProfileModalBtn.style.opacity = '1';
+          this.confirmTransferProfileModalBtn.style.cursor = 'pointer';
+        });
+        this.transferProfileNewList.appendChild(item);
+      });
+    }
+
+    this.transferProfileModal.style.display = 'flex';
+
+    // Bind Buttons
+    const handleClose = () => { this.transferProfileModal.style.display = 'none'; cleanup(); };
+    const handleBack = () => {
+      this.transferProfileStep2.style.display = 'none';
+      this.transferProfileStep1.style.display = 'block';
+      this.selectedNewProfileUid = null;
+      this.transferProfileNewList.querySelectorAll('.kick-player-item').forEach(el => el.classList.remove('selected'));
+      this.confirmTransferProfileModalBtn.disabled = true;
+      this.confirmTransferProfileModalBtn.style.opacity = '0.5';
+      this.confirmTransferProfileModalBtn.style.cursor = 'not-allowed';
+    };
+    const handleConfirm = () => {
+      if (this.selectedOldProfileUid && this.selectedNewProfileUid) {
+        if (onConfirm) onConfirm(this.selectedOldProfileUid, this.selectedNewProfileUid);
+        handleClose();
+      }
+    };
+
+    const cleanup = () => {
+      this.closeTransferProfileModalBtn.onclick = null;
+      this.backTransferProfileModalBtn.onclick = null;
+      this.confirmTransferProfileModalBtn.onclick = null;
+    };
+
+    this.closeTransferProfileModalBtn.onclick = handleClose;
+    this.backTransferProfileModalBtn.onclick = handleBack;
+    this.confirmTransferProfileModalBtn.onclick = handleConfirm;
+  }
+
+  hideTransferProfileModal() {
+    if (this.transferProfileModal) this.transferProfileModal.style.display = 'none';
   }
 
   // --- Kick Player Modal ---

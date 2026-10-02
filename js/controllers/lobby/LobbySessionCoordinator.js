@@ -127,6 +127,22 @@ export class LobbySessionCoordinator {
     // Check if room currently has an active GM (someone other than this user)
     const hasActiveGM = memberUids.some(uid => uid !== user?.uid && members[uid] && members[uid].role === 'game_master');
 
+    const existingMemberByToken = sessionToken 
+      ? Object.values(members || {}).find(m => m && m.sessionToken === sessionToken) 
+      : null;
+    const isReturning = Boolean(savedMember || (members && members[user?.uid]) || existingMemberByToken);
+
+    if (!isReturning) {
+      const isCapacityOk = await this.firebaseService.checkServerCapacity(95);
+      if (!isCapacityOk) {
+        return {
+          isAllowed: false,
+          reason: 'SERVER_FULL',
+          message: "เซิร์ฟเวอร์เต็ม (Server Full) มีผู้เล่นใช้งานเต็มความจุ 95 คนแล้ว โปรดรอให้มีผู้เล่นอื่นออกจากระบบ หรือลองใหม่ภายหลัง เพื่อป้องกันไม่ให้เกมของคนที่เล่นอยู่เกิดการสะดุดครับ"
+        };
+      }
+    }
+
     return {
       isAllowed: true,
       clientIp,

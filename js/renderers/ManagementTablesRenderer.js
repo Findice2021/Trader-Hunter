@@ -127,9 +127,9 @@ export class ManagementTablesRenderer {
 
       html += `
         <tr class="border-b border-gray-800 hover:bg-gray-850" data-player-uid="${uid}">
-          <td class="p-3 text-center align-middle table-col-center"><div class="flex items-center justify-center"><button type="button" class="gm-salary-btn" data-uid="${uid}" title="Pay 10,000 Salary">Salary 10,000</button></div></td>
-          <td class="p-3 font-semibold text-white align-middle text-left table-col-left">${member.displayName || 'Player'}</td>
-          <td class="p-3 text-emerald-400 font-semibold align-middle text-center table-col-center font-mono">${formattedCash}</td>
+          <td class="p-3 text-center align-middle"><div class="flex items-center justify-center"><button type="button" class="gm-salary-btn" data-uid="${uid}" title="Pay 10,000 Salary">Salary 10,000</button></div></td>
+          <td class="p-3 font-semibold text-white align-middle text-center"><div class="flex items-center justify-center">${(member.online !== false) ? `<span style=\"display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #10b981; margin-right: 8px;\" title=\"Online\"></span>` : `<span style=\"display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #ef4444; margin-right: 8px;\" title=\"Offline\"></span>`}${member.displayName || 'Player'}</div></td>
+          <td class="p-3 text-emerald-400 font-semibold align-middle text-center font-mono">${formattedCash}</td>
         </tr>
       `;
     });
@@ -318,9 +318,9 @@ export class ManagementTablesRenderer {
 
       html += `
         <tr class="border-b border-gray-800 hover:bg-gray-850" data-player-uid="${uid}">
-          <td class="p-3 text-center align-middle table-col-center"><div class="flex items-center justify-center"><button type="button" class="gm-dividend-btn ${dividendBtnState}" data-uid="${uid}" title="Pay ${formattedDividend} Dividend">Dividend ${formattedDividend}</button></div></td>
-          <td class="p-3 font-semibold text-white align-middle text-left table-col-left">${member.displayName || 'Player'}</td>
-          <td class="p-3 align-middle text-center table-col-center">${holdingsSummaryText}</td>
+          <td class="p-3 text-center align-middle"><div class="flex items-center justify-center"><button type="button" class="gm-dividend-btn" ${dividendBtnState}" data-uid="${uid}" title="Pay ${formattedDividend} Dividend">Dividend ${formattedDividend}</button></div></td>
+          <td class="p-3 font-semibold text-white align-middle text-center">${member.displayName || 'Player'}</td>
+          <td class="p-3 align-middle text-center">${holdingsSummaryText}</td>
         </tr>
       `;
     });
@@ -381,9 +381,9 @@ export class ManagementTablesRenderer {
 
       html += `
         <tr class="border-b border-gray-800 hover:bg-gray-850" data-player-uid="${uid}">
-          <td class="p-3 text-center align-middle"><div class="flex items-center justify-center"><button type="button" class="gm-debt-interest-btn ${interestBtnState}" data-uid="${uid}" title="Pay ${formattedInterest} Interest">Interest ${formattedInterest}</button></div></td>
-          <td class="p-3 font-semibold text-white align-middle">${member.displayName || 'Player'}</td>
-          <td class="p-3 align-middle">${debtHoldingsText}</td>
+          <td class="p-3 text-center align-middle"><div class="flex items-center justify-center"><button type="button" class="gm-debt-interest-btn" ${interestBtnState}" data-uid="${uid}" title="Pay ${formattedInterest} Interest">Interest ${formattedInterest}</button></div></td>
+          <td class="p-3 font-semibold text-white align-middle text-center">${member.displayName || 'Player'}</td>
+          <td class="p-3 align-middle text-center">${debtHoldingsText}</td>
         </tr>
       `;
     });

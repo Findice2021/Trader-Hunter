@@ -30,15 +30,12 @@ export class SessionLockService {
         this.broadcastChannel.onmessage = (event) => {
           if (event && event.data && event.data.type === 'NEW_SESSION_ACTIVE') {
             const { sessionId, roomCode, newUserId } = event.data;
-            // Only kick if it is the SAME room AND the SAME user account
+            // Only kick if it is the SAME room (strict 1 tab per browser rule)
             if (
               sessionId &&
               sessionId !== this.sessionId &&
               this.currentRoomCode &&
-              this.currentRoomCode === roomCode &&
-              this.currentUserId &&
-              newUserId &&
-              this.currentUserId === newUserId
+              this.currentRoomCode === roomCode
             ) {
               this.triggerKick("พบบัญชีนี้เปิดใช้งานในแท็บใหม่ เซสชันในแท็บนี้จึงถูกปิดลงโดยอัตโนมัติ", newUserId);
             }
@@ -55,16 +52,13 @@ export class SessionLockService {
         if (event && event.key && event.key.startsWith('trade_hunter_active_session_') && event.newValue) {
           try {
             const data = JSON.parse(event.newValue);
-            // Only kick if it is the SAME room AND the SAME user account
+            // Only kick if it is the SAME room (strict 1 tab per browser rule)
             if (
               data &&
               data.sessionId &&
               data.sessionId !== this.sessionId &&
               this.currentRoomCode &&
-              this.currentRoomCode === data.roomCode &&
-              this.currentUserId &&
-              data.newUserId &&
-              this.currentUserId === data.newUserId
+              this.currentRoomCode === data.roomCode
             ) {
               this.triggerKick("พบบัญชีนี้เปิดใช้งานในแท็บใหม่ เซสชันในแท็บนี้จึงถูกปิดลงโดยอัตโนมัติ", data.newUserId);
             }

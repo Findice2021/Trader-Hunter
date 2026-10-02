@@ -20,6 +20,44 @@ export class DangerZoneHandler {
    * Binds Danger Zone Reset Market Price and Reset Entire Game Room buttons.
    */
   bindDangerZone() {
+    
+    const openTransferProfileModalBtn = document.getElementById('openTransferProfileModalBtn');
+    if (openTransferProfileModalBtn) {
+      openTransferProfileModalBtn.addEventListener('click', async () => {
+        if (this.state.role !== 'game_master') return;
+        
+        try {
+          const roomSnap = await this.firebaseService.getRoomStateSnapshot(this.state.roomCode);
+          if (roomSnap && roomSnap.exists()) {
+            const members = roomSnap.val().members || {};
+            const offlinePlayers = [];
+            const onlinePlayers = [];
+            
+            Object.entries(members).forEach(([uid, m]) => {
+              if (m.role === 'player') {
+                if (m.online === false) {
+                  offlinePlayers.push({ uid, ...m });
+                } else {
+                  onlinePlayers.push({ uid, ...m });
+                }
+              }
+            });
+
+            this.renderer.showTransferProfileModal(offlinePlayers, onlinePlayers, async (oldUid, newUid) => {
+                const res = await this.firebaseService.transferPlayerProfile(this.state.roomCode, oldUid, newUid);
+                if (res && res.success) {
+                  this.renderer.showTopToast("SUCCESS", "โอนสิทธิ์ตัวละครสำเร็จ", "success");
+                } else {
+                  this.renderer.showTopToast("ERROR", "โอนสิทธิ์ตัวละครไม่สำเร็จ: " + (res?.reason || "Unknown error"), "error");
+                }
+              });
+          }
+        } catch (e) {
+          console.error("Failed to load members for transfer profile:", e);
+        }
+      });
+    }
+
     if (this.renderer.resetMarketBtn) {
       this.renderer.resetMarketBtn.addEventListener('click', () => {
         if (this.state.role !== 'game_master') return;

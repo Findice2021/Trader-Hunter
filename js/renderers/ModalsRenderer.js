@@ -232,6 +232,10 @@ export class ModalsRenderer {
     return this.governanceModals.hideDirectTransferModal();
   }
 
+  // --- Transfer Profile Modal (Delegated to GovernanceModalsRenderer) ---
+  showTransferProfileModal(offline, online, onConfirm) { this.governanceModals.showTransferProfileModal(offline, online, onConfirm); }
+  hideTransferProfileModal() { this.governanceModals.hideTransferProfileModal(); }
+
   // --- Kick Player Modals (Delegated to GovernanceModalsRenderer) ---
   isKickPlayerModalOpen() {
     return this.governanceModals.isKickPlayerModalOpen();

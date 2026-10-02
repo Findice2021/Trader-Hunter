@@ -129,14 +129,15 @@ export class GMManagementHandler {
       const player = roomData.members[playerUid];
       const playerName = player.displayName || 'Player';
 
-      const confirmResult = await this.renderer.showConfirmAlert(
+            const confirmResult = await this.renderer.showConfirmAlert(
         "Confirm Salary Payment",
-        `คุณต้องการจ่ายเงินเดือน 10,000 บาท ให้กับผู้เล่น "${playerName}" หรือไม่?`,
+        `คุณต้องการจ่ายเงินเดือน 10,000 บาท ให้กับผู้เล่น "${playerName}" ใช่หรือไม่?`,
         "YES",
         "NO"
       );
 
       if (!confirmResult || !confirmResult.isConfirmed) return;
+
 
       await this.captureUndoSnapshot();
 
@@ -192,14 +193,8 @@ export class GMManagementHandler {
       const player = roomData.members[playerUid];
       const playerName = player.displayName || 'Player';
 
-      const confirmResult = await this.renderer.showConfirmAlert(
-        "Confirm Expense Deduction",
-        `คุณต้องการหักค่าใช้จ่าย ${amount.toLocaleString()} บาท จากผู้เล่น "${playerName}" หรือไม่?`,
-        "YES",
-        "NO"
-      );
+      // Direct deduction without secondary confirmation
 
-      if (!confirmResult || !confirmResult.isConfirmed) return;
 
       await this.captureUndoSnapshot();
 

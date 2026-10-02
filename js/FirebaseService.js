@@ -122,6 +122,10 @@ export class FirebaseService {
   async saveMemberSnapshot(roomCode, sessionToken, data) { await this.roomRepo.saveMemberSnapshot(roomCode, sessionToken, data); }
   async getMemberSnapshot(roomCode, sessionToken) { return await this.roomRepo.getMemberSnapshot(roomCode, sessionToken); }
   async deleteRoomData(roomCode) { await this.roomRepo.deleteRoomData(roomCode); }
+  async setRoomExpirationIndex(roomCode, expiresAt) { await this.roomRepo.setRoomExpirationIndex(roomCode, expiresAt); }
+  async garbageCollectExpiredRooms() { await this.roomRepo.garbageCollectExpiredRooms(); }
+  async checkServerCapacity(maxConns) { return await this.roomRepo.checkServerCapacity(maxConns); }
+  registerGlobalPresence() { this.roomRepo.registerGlobalPresence(); }
   async removeMemberFromRoom(roomCode, userId) { await this.roomRepo.removeMemberFromRoom(roomCode, userId); }
   async joinRoomWithTransaction(roomCode, userObj, clientIp = 'unknown') { return await this.roomRepo.joinRoomWithTransaction(roomCode, userObj, clientIp); }
   async resetRoomWithKickAll(roomCode, resetStocks) { await this.roomRepo.resetRoomWithKickAll(roomCode, resetStocks); }
@@ -144,5 +148,6 @@ export class FirebaseService {
   async transferGMRoleDirectly(roomCode, currentGmUid, targetPlayerUid) { return await this.governanceRepo.transferGMRoleDirectly(roomCode, currentGmUid, targetPlayerUid); }
   async forceClaimGMRole(roomCode, claimingUid, claimingPlayerName) { return await this.governanceRepo.forceClaimGMRole(roomCode, claimingUid, claimingPlayerName); }
   async kickPlayerAndPurgeData(roomCode, targetUid) { return await this.governanceRepo.kickPlayerAndPurgeData(roomCode, targetUid); }
+  async transferPlayerProfile(roomCode, oldUid, newUid) { return await this.governanceRepo.transferPlayerProfile(roomCode, oldUid, newUid); }
   async clearKickedMember(roomCode, uid) { await this.governanceRepo.clearKickedMember(roomCode, uid); }
 }

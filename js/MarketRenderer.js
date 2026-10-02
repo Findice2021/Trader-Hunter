@@ -161,7 +161,7 @@ export class MarketRenderer {
       if (btn) {
         btn.disabled = true;
         btn.classList.add('is-checking');
-        btn.style.setProperty('display', 'none', 'important');
+        btn.style.setProperty('visibility', 'hidden', 'important');
       }
       if (indicator) {
         if (customText) {
@@ -179,7 +179,7 @@ export class MarketRenderer {
       }
       if (btn) {
         btn.classList.remove('is-checking');
-        btn.style.removeProperty('display');
+        btn.style.removeProperty('visibility');
         btn.disabled = false;
       }
     }
@@ -484,6 +484,8 @@ export class MarketRenderer {
   updateKickPlayerList(players = []) { this.modalsRenderer.updateKickPlayerList(players); }
   showKickPlayerModal(players = [], onConfirm = null) { this.modalsRenderer.showKickPlayerModal(players, onConfirm); }
   hideKickPlayerModal() { this.modalsRenderer.hideKickPlayerModal(); }
+  showTransferProfileModal(offline, online, onConfirm) { this.modalsRenderer.showTransferProfileModal(offline, online, onConfirm); }
+  hideTransferProfileModal() { this.modalsRenderer.hideTransferProfileModal(); }
   showPlayerNameModal(options = {}) { this.modalsRenderer.showPlayerNameModal(options); }
   hidePlayerNameModal() { this.modalsRenderer.hidePlayerNameModal(); }
   showPlayerNameError(message) { this.modalsRenderer.showPlayerNameError(message); }

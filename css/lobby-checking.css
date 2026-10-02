@@ -7,7 +7,6 @@
 form.is-checking #joinRoomBtn,
 form.is-checking .lobby-joy-btn,
 .lobby-joy-btn.is-checking {
-  display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
@@ -16,7 +15,7 @@ form.is-checking .lobby-joy-btn,
 /* คอนเทนเนอร์สถานะ Checking: ซ่อนไว้เป็นค่าเริ่มต้น (ไม่แสดงก่อนกดปุ่ม) */
 .lobby-checking-indicator {
   display: none !important;
-  position: relative !important;
+  position: absolute !important;
   z-index: 25 !important;
   align-items: center !important;
   justify-content: center !important;

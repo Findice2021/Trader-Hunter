@@ -5,3 +5,6 @@
 
 /* ดึงไฟล์สไตล์หลัก css/main.css (ซึ่งรวมไฟล์ base.css, lobby.css, market.css, portfolio.css, และ modal.css ไว้ทั้งหมด) */
 @import 'main.css';
+
+.text-right { text-align: right !important; }
+.align-middle { vertical-align: middle !important; }
