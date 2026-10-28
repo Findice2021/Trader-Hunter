@@ -171,6 +171,7 @@ export class MarketBoardController {
     };
 
     if (this.renderer.sortPriceBtn) this.renderer.sortPriceBtn.addEventListener('click', (e) => handleSortClick('PRICE', e));
+    if (this.renderer.sortBetaBtn) this.renderer.sortBetaBtn.addEventListener('click', (e) => handleSortClick('BETA', e));
     if (this.renderer.sortSectorBtn) this.renderer.sortSectorBtn.addEventListener('click', (e) => handleSortClick('SECTOR', e));
   }
 

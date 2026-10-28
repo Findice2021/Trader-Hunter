@@ -1,4 +1,5 @@
 import { PlayerSessionService } from '../services/PlayerSessionService.js';
+import { RoomInviteService } from '../services/RoomInviteService.js';
 import { LobbyInputHandler } from './lobby/LobbyInputHandler.js';
 import { LobbySessionCoordinator } from './lobby/LobbySessionCoordinator.js';
 import { RoomSetupService } from './lobby/RoomSetupService.js';
@@ -30,12 +31,17 @@ export class LobbyController {
    * @param {Function} onJoinSuccess - Callback invoked when room join/creation succeeds.
    */
   bindLobbyEntrance(onJoinSuccess) {
+    // QR invite (?room=CODE): fill the code before bindInputEvents so the last-room prefill is skipped
+    const inviteCode = RoomInviteService.consumeRoomCodeFromUrl();
+    if (inviteCode && this.renderer.roomCodeInput) {
+      this.renderer.roomCodeInput.value = inviteCode;
+    }
+
     this.inputHandler.bindInputEvents();
 
     if (!this.renderer.lobbyForm) return;
 
-    this.renderer.lobbyForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    const submitRoomCode = async () => {
       if (this.isSubmitting) return;
 
       const code = this.renderer.roomCodeInput ? this.renderer.roomCodeInput.value.trim().toUpperCase() : '';
@@ -71,7 +77,18 @@ export class LobbyController {
           this.renderer.setLobbyChecking(false);
         }
       }
+    };
+
+    this.renderer.lobbyForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitRoomCode();
     });
+
+    // Scanned the GM's QR code: join automatically instead of waiting for the player to press JOIN
+    if (inviteCode) {
+      this.updateRoomCodeSlots(inviteCode, false);
+      submitRoomCode();
+    }
   }
 
   // --- Backward Compatibility Proxies ---

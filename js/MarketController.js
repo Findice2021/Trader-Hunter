@@ -11,6 +11,7 @@ import { BoardSyncHandler } from './controllers/sync/BoardSyncHandler.js';
 import { RoomSyncHandler } from './controllers/sync/RoomSyncHandler.js';
 import { AppLifecycleService } from './services/AppLifecycleService.js';
 import { RoomGovernanceController } from './controllers/room/RoomGovernanceController.js';
+import { RoomInviteController } from './controllers/room/RoomInviteController.js';
 
 /**
  * MarketController - Main Facade Controller coordinating Lobby, Trading,
@@ -46,6 +47,9 @@ export class MarketController {
       playerSessionService: this.playerSessionService,
       marketController: this
     });
+
+    // GM QR Code room invite
+    this.roomInviteController = new RoomInviteController({ state: this.state, renderer: this.renderer });
 
     // Sync Handlers (Extracted in Phase 3)
     this.boardSyncHandler = new BoardSyncHandler({
@@ -334,6 +338,7 @@ export class MarketController {
 
     this.tradeController.bindTradeFormEvents();
     this.roomGovernanceController.bindAll();
+    this.roomInviteController.bind();
     this.appLifecycleService.bindGlobalProtectionEvents();
     this.appLifecycleService.bindLifecycleReverificationEvents();
 

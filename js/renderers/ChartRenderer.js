@@ -7,7 +7,11 @@ export class ChartRenderer {
   }
 
   drawCardChart(canvas, history, activeIndex = -1) {
+    // Remember the newest data so the chart can be repainted by redrawOpenCharts() after its tab is shown again
+    canvas.latestHistory = history;
     const rect = canvas.getBoundingClientRect();
+    // Tab hidden (display:none) => width 0; resizing the canvas now would wipe it and leave it blank on return
+    if (rect.width === 0) return;
     const dpr = window.devicePixelRatio || 1;
     canvas.width = rect.width * dpr;
     canvas.height = 145 * dpr;
@@ -216,6 +220,20 @@ export class ChartRenderer {
       
       ctx.fillText(priceText, alignX, paddingTop - 4);
     }
+  }
+
+  /**
+   * Repaints every expanded card chart with its latest history (call after the Market tab becomes visible).
+   */
+  redrawOpenCharts(priceGrid) {
+    if (!priceGrid) return;
+    priceGrid.querySelectorAll('.chart-container').forEach(chartContainer => {
+      if (chartContainer.style.display !== 'flex' && chartContainer.style.display !== 'block') return;
+      const canvas = chartContainer.querySelector('.stock-chart-canvas');
+      if (canvas && canvas.latestHistory) {
+        this.drawCardChart(canvas, canvas.latestHistory);
+      }
+    });
   }
 
   getClosestPointIndex(canvas, clientX) {

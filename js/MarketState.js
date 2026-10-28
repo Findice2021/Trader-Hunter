@@ -24,7 +24,8 @@ export class MarketState {
     this.selectedSizes = new Set();
     this.sortStates = {
       SECTOR: { enabled: false, dir: 'ASC' },
-      PRICE: { enabled: false, dir: 'DESC' }
+      PRICE: { enabled: false, dir: 'DESC' },
+      BETA: { enabled: false, dir: 'DESC' }
     };
     
     this.roomCode = null;
@@ -351,7 +352,8 @@ export class MarketState {
   resetFilters() {
     this.sortStates = {
       SECTOR: { enabled: false, dir: 'ASC' },
-      PRICE: { enabled: false, dir: 'DESC' }
+      PRICE: { enabled: false, dir: 'DESC' },
+      BETA: { enabled: false, dir: 'DESC' }
     };
     this.selectedSectors.clear();
     this.selectedSizes.clear();
@@ -368,8 +370,9 @@ export class MarketState {
 
     const isSectorActive = this.sortStates.SECTOR.enabled;
     const isPriceActive = this.sortStates.PRICE.enabled;
+    const isBetaActive = this.sortStates.BETA.enabled;
 
-    if (isSectorActive || isPriceActive) {
+    if (isSectorActive || isPriceActive || isBetaActive) {
       filtered.sort((a, b) => {
         if (isSectorActive) {
           const valA = a.getAttribute('data-sector') || '';
@@ -382,6 +385,13 @@ export class MarketState {
           const valA = parseFloat(a.getAttribute('data-price'));
           const valB = parseFloat(b.getAttribute('data-price'));
           const comparison = this.sortStates.PRICE.dir === 'DESC' ? valB - valA : valA - valB;
+          if (comparison !== 0) return comparison;
+        }
+
+        if (isBetaActive) {
+          const valA = parseFloat(a.getAttribute('data-beta'));
+          const valB = parseFloat(b.getAttribute('data-beta'));
+          const comparison = this.sortStates.BETA.dir === 'DESC' ? valB - valA : valA - valB;
           if (comparison !== 0) return comparison;
         }
 

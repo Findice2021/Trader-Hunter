@@ -176,7 +176,7 @@ export class PortfolioRenderer {
         <tr class="hover:bg-gray-900 transition-colors">
           <td class="${actionColor} align-middle text-left table-col-left">${order.type}</td>
           <td class="font-bold text-white align-middle text-left table-col-left">${order.symbol}</td>
-          <td class="align-middle text-right table-col-right font-mono">${orderPrice.toLocaleString('en-US')}</td>
+          <td class="align-middle text-center table-col-center font-mono">${orderPrice.toLocaleString('en-US')}</td>
           <td class="align-middle text-center table-col-center">
             <span class="text-yellow-400 font-bold text-[11px] uppercase tracking-wider">
               PENDING

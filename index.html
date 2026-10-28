@@ -6,9 +6,11 @@
   <title>Findice Dashboard</title>
   <!-- SweetAlert2 for Premium UI Alert (Loaded before custom styles to allow clean overrides) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css">
-  <link rel="stylesheet" href="css/styles.css?v=20260920_02" />
+  <link rel="stylesheet" href="css/styles.css?v=20261028_01" />
   <link rel="stylesheet" href="css/gm-transfer.css?v=20260920_02" />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+  <!-- qrcode-generator: draws the GM room-invite QR Code (js/renderers/RoomQrModalRenderer.js) -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" integrity="sha512-ZDSPMa/JM1D+7kdg2x3BsruQ6T/JpJo3jWDWkCZsP+5yVyp1KfESqLI+7RqB5k24F7p2cV7i2YHh/890y6P6Sw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- ES Module Shims polyfill for older iOS Safari / Android WebViews / In-App Browsers -->
   <script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
   <!-- Firebase SDK v10 Import Map -->
@@ -209,11 +211,19 @@
           <span id="roomCountdownTimerText" style="font-size: 11px; font-weight: 800; color: #f3f4f6; letter-spacing: 0.05em; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">03:00:00</span>
         </div>
       </div>
-      <button id="leaveRoomBtn" title="Leave Room" class="ml-auto leave-room-icon-btn">
-        <svg style="width: 18px; height: 18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
-      </button>
+      <div class="ml-auto flex items-center gap-2">
+        <!-- GM only: open the QR Code invite modal (visibility toggled by MarketRenderer.updateControlsVisibility) -->
+        <button id="roomQrBtn" title="Invite players with QR Code" aria-label="Invite players with QR Code" class="room-qr-icon-btn" style="display: none;">
+          <svg style="width: 20px; height: 20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h2v2h-2v-2zm4 0h2v2h-2v-2zm-4 4h2v2h-2v-2zm4 0h2v2h-2v-2z" />
+          </svg>
+        </button>
+        <button id="leaveRoomBtn" title="Leave Room" class="leave-room-icon-btn">
+          <svg style="width: 18px; height: 18px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <header class="hero flex items-center justify-center">
@@ -316,6 +326,10 @@
           <div class="sort-toggles" id="sortToggles">
             <button id="sortPriceBtn" class="sort-toggle-btn">
               <span class="sort-label">Price</span>
+              <span class="sort-icon">↕</span>
+            </button>
+            <button id="sortBetaBtn" class="sort-toggle-btn">
+              <span class="sort-label">Beta</span>
               <span class="sort-icon">↕</span>
             </button>
             <button id="sortSectorBtn" class="sort-toggle-btn">
@@ -644,7 +658,7 @@
               <tr>
                 <th class="table-col-left">Type</th>
                 <th class="table-col-left">Symbol</th>
-                <th class="table-col-right">Proposed Price</th>
+                <th class="table-col-center">Proposed Price</th>
                 <th class="table-col-center">Status</th>
               </tr>
             </thead>
@@ -1052,6 +1066,28 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Apple-Style Room Invite QR Code Modal Card (GM) -->
+  <div id="roomQrModal" class="apple-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="roomQrTitle" style="display: none;">
+    <div class="apple-modal-card flex flex-col items-center relative">
+      <h3 id="roomQrTitle" class="apple-modal-title font-bold">เชิญผู้เล่นเข้าห้อง</h3>
+      <p class="apple-modal-subtitle text-xs text-gray-300 mb-4 text-center">
+        ให้ผู้เล่นสแกน QR Code นี้เพื่อเข้าห้องได้ทันที
+      </p>
+      <div id="roomQrImage" class="room-qr-box" role="img" aria-label="QR Code สำหรับเข้าห้อง"></div>
+      <span class="room-qr-code-label">ROOM CODE</span>
+      <span id="roomQrCodeText" class="room-qr-code-text">-</span>
+      <p id="roomQrLinkText" class="room-qr-link-text"></p>
+      <div class="apple-modal-actions w-full">
+        <button type="button" id="roomQrCloseBtn" class="apple-btn-player" style="background: #475569; box-shadow: none;">
+          ปิด
+        </button>
+        <button type="button" id="roomQrCopyBtn" class="apple-btn-player">
+          คัดลอกลิงก์
+        </button>
+      </div>
     </div>
   </div>
 

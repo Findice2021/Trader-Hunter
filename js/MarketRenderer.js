@@ -2,6 +2,7 @@ import { ChartRenderer } from './renderers/ChartRenderer.js';
 import { PortfolioRenderer } from './renderers/PortfolioRenderer.js';
 import { CardGridRenderer } from './renderers/CardGridRenderer.js';
 import { ModalsRenderer } from './renderers/ModalsRenderer.js';
+import { RoomQrModalRenderer } from './renderers/RoomQrModalRenderer.js';
 
 /**
  * MarketRenderer - Main Facade Renderer coordinating Canvas Charts, Portfolio UI, Stock Card Grid, and Modals modules.
@@ -14,6 +15,7 @@ export class MarketRenderer {
     this.sectorPills = document.getElementById('sectorPills');
     this.sizePills = document.getElementById('sizePills');
     this.sortPriceBtn = document.getElementById('sortPriceBtn');
+    this.sortBetaBtn = document.getElementById('sortBetaBtn');
     this.sortSectorBtn = document.getElementById('sortSectorBtn');
     this.resetBtn = document.getElementById('resetBtn');
     this.resetMarketBtn = document.getElementById('resetMarketBtn');
@@ -58,13 +60,14 @@ export class MarketRenderer {
 
     // Sub-renderers following Single Responsibility Principle
     this.modalsRenderer = new ModalsRenderer();
+    this.roomQrModalRenderer = new RoomQrModalRenderer();
     this.chartRenderer = new ChartRenderer(this);
     this.portfolioRenderer = new PortfolioRenderer();
     this.cardGridRenderer = new CardGridRenderer(
       this.priceGrid,
       this.sectorPills,
       this.sortPriceBtn,
-      null,
+      this.sortBetaBtn,
       null,
       this.sortSectorBtn,
       this.modalsRenderer.confirmModal
@@ -123,6 +126,7 @@ export class MarketRenderer {
 
   showLobby() {
     this.hidePlayerNameModal();
+    this.hideRoomQrModal();
     if (this.portfolioRenderer) {
       this.portfolioRenderer.resetAnimationState();
     }
@@ -240,6 +244,12 @@ export class MarketRenderer {
     if (gmBatchControls) {
       gmBatchControls.style.display = isMaster ? 'inline-flex' : 'none';
     }
+
+    const roomQrBtn = document.getElementById('roomQrBtn');
+    if (roomQrBtn) {
+      roomQrBtn.style.display = isMaster ? 'inline-flex' : 'none';
+    }
+    if (!isMaster) this.hideRoomQrModal();
 
     const gmDangerZone = document.querySelector('.danger-zone-section');
     if (gmDangerZone) {
@@ -368,6 +378,7 @@ export class MarketRenderer {
         if (marketTabContent) marketTabContent.style.display = 'block';
         if (portTabContent) portTabContent.style.display = 'none';
         if (mgmtTabContent) mgmtTabContent.style.display = 'none';
+        this.chartRenderer.redrawOpenCharts(this.priceGrid);
         if (onTabChange) onTabChange('market');
       });
     }
@@ -489,6 +500,10 @@ export class MarketRenderer {
   showPlayerNameModal(options = {}) { this.modalsRenderer.showPlayerNameModal(options); }
   hidePlayerNameModal() { this.modalsRenderer.hidePlayerNameModal(); }
   showPlayerNameError(message) { this.modalsRenderer.showPlayerNameError(message); }
+
+  // --- GM Invite QR Modal Delegations ---
+  showRoomQrModal(inviteUrl, roomCode, onCopy) { this.roomQrModalRenderer.show(inviteUrl, roomCode, onCopy); }
+  hideRoomQrModal() { this.roomQrModalRenderer.hide(); }
 
   // --- Chart Rendering Delegations ---
   drawCardChart(canvas, history, activeIndex = -1) { this.chartRenderer.drawCardChart(canvas, history, activeIndex); }

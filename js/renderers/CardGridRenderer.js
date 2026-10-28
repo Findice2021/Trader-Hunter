@@ -7,6 +7,7 @@ export class CardGridRenderer {
     this.priceGrid = priceGrid;
     this.sectorPills = sectorPills;
     this.sortPriceBtn = sortPriceBtn;
+    this.sortBetaBtn = sortBetaBtn;
     this.sortSectorBtn = sortSectorBtn;
     this.confirmModal = confirmModal;
   }
@@ -179,7 +180,8 @@ export class CardGridRenderer {
 
   updateSortButtonsUI(sortStates) {
     const buttons = [
-      { btn: this.sortPriceBtn, type: 'PRICE', label: 'Price' }
+      { btn: this.sortPriceBtn, type: 'PRICE', label: 'Price' },
+      { btn: this.sortBetaBtn, type: 'BETA', label: 'Beta' }
     ];
 
     buttons.forEach(({ btn, type, label }) => {
